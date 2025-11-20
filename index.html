@@ -305,16 +305,21 @@
             const width = parseFloat(document.getElementById('wallWidth').value);
             const height = parseFloat(document.getElementById('wallHeight').value);
             const color = document.getElementById('wallColor').value;
-            
+
             // Convert to inches for calculation
             const widthInches = units === 'cm' ? cmToInches(width) : width;
             const heightInches = units === 'cm' ? cmToInches(height) : height;
-            
-            // Calculate scale to fit within container (max 800x600)
-            wallScale = Math.min(800 / widthInches, 600 / heightInches);
+
+            // Get the workspace container width to scale appropriately
+            const workspace = wallContainer.parentElement;
+            const maxWidth = workspace.offsetWidth - 40; // Account for padding
+            const maxHeight = 600;
+
+            // Calculate scale to fit within available space
+            wallScale = Math.min(maxWidth / widthInches, maxHeight / heightInches);
             const displayWidth = widthInches * wallScale;
             const displayHeight = heightInches * wallScale;
-            
+
             wallContainer.style.width = displayWidth + 'px';
             wallContainer.style.height = displayHeight + 'px';
             wallContainer.style.backgroundColor = color;
