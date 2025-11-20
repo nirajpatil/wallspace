@@ -119,6 +119,44 @@ button:hover {
     flex: 1;
 }
 
+.wall-icon {
+    position: absolute;
+    top: 10px;
+    background: white;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.2s ease, background 0.2s ease;
+    z-index: 100;
+    padding: 0;
+    margin: 0;
+    color: #667eea;
+}
+
+.wall-container:hover .wall-icon {
+    opacity: 1;
+}
+
+.wall-icon:hover {
+    background: #667eea;
+    color: white;
+    transform: scale(1.1);
+}
+
+.save-icon {
+    right: 60px;
+}
+
+.delete-icon {
+    right: 10px;
+}
+
 .artwork {
     position: absolute;
     cursor: move;
