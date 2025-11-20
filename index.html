@@ -68,10 +68,6 @@
                         </svg>
                     </button>
                 </div>
-
-                <div style="margin-top: 20px;">
-                    <input type="text" id="layoutName" placeholder="Enter layout name..." style="width: 200px; margin-right: 10px;">
-                </div>
             </div>
 
             <div class="layouts-panel" style="display: none;">
@@ -618,7 +614,7 @@
         }
 
         function saveLayout() {
-            const name = document.getElementById('layoutName').value || 'Untitled Layout';
+            const name = `Gallery ${savedLayouts.length + 1}`;
             const wallSettings = {
                 width: document.getElementById('wallWidth').value,
                 height: document.getElementById('wallHeight').value,
@@ -663,7 +659,6 @@
             savedLayouts.push(newLayout);
             
             if (saveLayoutsToStorage()) {
-                document.getElementById('layoutName').value = '';
                 loadSavedLayouts();
                 
                 // Show success message
