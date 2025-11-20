@@ -1,7 +1,7 @@
 /* Custom Font */
 @font-face {
-    font-family: 'Abordage';
-    src: url('Fonts/Abordage-Regular.woff2') format('woff2');
+    font-family: 'Basalte-Fond';
+    src: url('fonts/Basalte-Fond.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
@@ -54,8 +54,8 @@ body {
 .control-panel h3 {
     color: #2c3e50;
     margin-bottom: 15px;
-    font-size: 1.2em;
-    font-family: 'Abordage', sans-serif;
+    font-size: 40px;
+    font-family: 'Basalte-Fond', sans-serif;
     font-weight: bold;
 }
 
@@ -260,7 +260,7 @@ button:hover {
     color: #2c3e50;
     margin-bottom: 15px;
     font-size: 1.1em;
-    font-family: 'Abordage', sans-serif;
+    font-family: 'Basalte-Fond', sans-serif;
     font-weight: bold;
 }
 
@@ -281,7 +281,7 @@ button:hover {
     color: #2c3e50;
     margin-bottom: 15px;
     font-size: 1.2em;
-    font-family: 'Abordage', sans-serif;
+    font-family: 'Basalte-Fond', sans-serif;
     font-weight: bold;
 }
 
