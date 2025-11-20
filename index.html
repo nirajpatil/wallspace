@@ -7,12 +7,8 @@
     <title>Wallspace</title>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Wall Art Arrangement Planner</h1>
-        </div>
-
-        <div class="controls">
+    <div class="main-layout">
+        <div class="column-1">
             <div class="control-panel">
                 <h3>Wall Settings</h3>
                 <div class="form-group">
@@ -41,9 +37,11 @@
                 </div>
                 <button onclick="updateWall()">Update Wall</button>
             </div>
+        </div>
 
+        <div class="column-2">
             <div class="control-panel">
-                <h3>Upload Artwork</h3>
+                <h3>Uploaded Images</h3>
                 <div class="file-upload" onclick="document.getElementById('fileInput').click()">
                     <input type="file" id="fileInput" accept="image/*" multiple onchange="handleImageUpload(event)">
                     <p>📁 Click to upload artwork images</p>
@@ -53,12 +51,32 @@
             </div>
         </div>
 
-        <div class="workspace">
-            <h3>Your Gallery Wall</h3>
-            <div class="wall-container" id="wallContainer"></div>
-            
-            <div class="artwork-controls" id="artworkControls">
-                <h4>Selected Artwork Settings</h4>
+        <div class="column-3">
+            <div class="workspace">
+                <h3>Your Gallery Wall</h3>
+                <div class="wall-container" id="wallContainer"></div>
+
+                <div style="margin-top: 20px;">
+                    <input type="text" id="layoutName" placeholder="Enter layout name..." style="width: 200px; margin-right: 10px;">
+                    <button onclick="saveLayout()">💾 Save Layout</button>
+                    <button onclick="clearWall()">🗑️ Clear Wall</button>
+                    <button onclick="exportLayouts()" style="background: #f39c12;">📤 Export Data</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importLayouts(event)">
+                    <button onclick="document.getElementById('importFile').click()" style="background: #3498db;">📥 Import Data</button>
+                </div>
+            </div>
+
+            <div class="layouts-panel">
+                <h3>Saved Layouts</h3>
+                <div class="layout-grid" id="savedLayouts"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dialog for Selected Artwork Settings -->
+    <div class="artwork-dialog" id="artworkDialog">
+        <div class="dialog-content">
+            <h4>Selected Artwork Settings</h4>
                 <div class="control-row">
                     <div class="form-group">
                         <label for="artworkUnits">Artwork Units</label>
@@ -129,21 +147,6 @@
                     </div>
                 </div>
                 <button onclick="deleteSelected()">🗑️ Remove Artwork</button>
-            </div>
-
-                <div style="margin-top: 20px;">
-                <input type="text" id="layoutName" placeholder="Enter layout name..." style="width: 200px; margin-right: 10px;">
-                <button onclick="saveLayout()">💾 Save Layout</button>
-                <button onclick="clearWall()">🗑️ Clear Wall</button>
-                <button onclick="exportLayouts()" style="background: #f39c12;">📤 Export Data</button>
-                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importLayouts(event)">
-                <button onclick="document.getElementById('importFile').click()" style="background: #3498db;">📥 Import Data</button>
-            </div>
-        </div>
-
-        <div class="layouts-panel">
-            <h3>Saved Layouts</h3>
-            <div class="layout-grid" id="savedLayouts"></div>
         </div>
     </div>
 
@@ -411,17 +414,52 @@
             document.querySelectorAll('.artwork').forEach(art => {
                 art.classList.remove('selected');
             });
-            
+
             // Select the clicked artwork
             artwork.classList.add('selected');
             selectedArtwork = artwork;
-            
-            // Show controls
-            const controls = document.getElementById('artworkControls');
-            controls.classList.add('active');
-            
+
+            // Show dialog
+            const dialog = document.getElementById('artworkDialog');
+            dialog.classList.add('active');
+
+            // Position dialog next to artwork
+            positionDialog(artwork, dialog);
+
             // Update control values based on current artwork
             updateControlsFromArtwork(artwork);
+        }
+
+        function positionDialog(artwork, dialog) {
+            const artworkRect = artwork.getBoundingClientRect();
+            const dialogWidth = 320;
+            const dialogPadding = 20;
+
+            // Try to position to the right of the artwork
+            let left = artworkRect.right + dialogPadding;
+            let top = artworkRect.top;
+
+            // Check if dialog would go off screen on the right
+            if (left + dialogWidth > window.innerWidth) {
+                // Position to the left of the artwork
+                left = artworkRect.left - dialogWidth - dialogPadding;
+            }
+
+            // If still off screen, position to the left of the artwork within the wall container
+            if (left < 0) {
+                left = artworkRect.left - dialogWidth - dialogPadding;
+                if (left < 0) {
+                    // Just position at a fixed offset if no room
+                    left = artworkRect.right + 10;
+                }
+            }
+
+            // Keep within vertical bounds
+            const maxTop = window.innerHeight - dialog.offsetHeight - 20;
+            top = Math.max(20, Math.min(top, maxTop));
+
+            dialog.style.left = left + 'px';
+            dialog.style.top = top + 'px';
         }
 
         function updateControlsFromArtwork(artwork) {
@@ -562,7 +600,7 @@
             if (selectedArtwork) {
                 selectedArtwork.remove();
                 selectedArtwork = null;
-                document.getElementById('artworkControls').classList.remove('active');
+                document.getElementById('artworkDialog').classList.remove('active');
             }
         }
 
@@ -718,7 +756,7 @@
                 if (confirm('Are you sure you want to clear all artwork from the wall?')) {
                     document.getElementById('wallContainer').innerHTML = '';
                     selectedArtwork = null;
-                    document.getElementById('artworkControls').classList.remove('active');
+                    document.getElementById('artworkDialog').classList.remove('active');
                 }
             }
         }
@@ -776,24 +814,30 @@
             if (isDragging && selectedArtwork) {
                 const wallContainer = document.getElementById('wallContainer');
                 const wallRect = wallContainer.getBoundingClientRect();
-                
+
                 let newX = e.clientX - wallRect.left - dragOffset.x;
                 let newY = e.clientY - wallRect.top - dragOffset.y;
-                
+
                 // Keep within bounds
                 newX = Math.max(0, Math.min(newX, wallContainer.offsetWidth - selectedArtwork.offsetWidth));
                 newY = Math.max(0, Math.min(newY, wallContainer.offsetHeight - selectedArtwork.offsetHeight));
-                
+
                 selectedArtwork.style.left = newX + 'px';
                 selectedArtwork.style.top = newY + 'px';
+
+                // Reposition dialog while dragging
+                const dialog = document.getElementById('artworkDialog');
+                if (dialog.classList.contains('active')) {
+                    positionDialog(selectedArtwork, dialog);
+                }
             } else if (isResizing && selectedArtwork) {
                 const wallContainer = document.getElementById('wallContainer');
                 const wallRect = wallContainer.getBoundingClientRect();
                 const artworkRect = selectedArtwork.getBoundingClientRect();
-                
+
                 let newWidth = e.clientX - artworkRect.left;
                 let newHeight = e.clientY - artworkRect.top;
-                
+
                 // Maintain aspect ratio
                 const aspectRatio = selectedArtwork.offsetWidth / selectedArtwork.offsetHeight;
                 if (newWidth / newHeight > aspectRatio) {
@@ -801,19 +845,42 @@
                 } else {
                     newHeight = newWidth / aspectRatio;
                 }
-                
+
                 // Minimum size
                 newWidth = Math.max(50, newWidth);
                 newHeight = Math.max(50, newHeight);
-                
+
                 selectedArtwork.style.width = newWidth + 'px';
                 selectedArtwork.style.height = newHeight + 'px';
+
+                // Reposition dialog while resizing
+                const dialog = document.getElementById('artworkDialog');
+                if (dialog.classList.contains('active')) {
+                    positionDialog(selectedArtwork, dialog);
+                }
             }
         });
 
         document.addEventListener('mouseup', function() {
             isDragging = false;
             isResizing = false;
+        });
+
+        // Close dialog when clicking outside
+        document.addEventListener('click', function(e) {
+            const dialog = document.getElementById('artworkDialog');
+            const artwork = selectedArtwork;
+
+            // Check if click is outside dialog and artwork
+            if (dialog.classList.contains('active') &&
+                !dialog.contains(e.target) &&
+                (!artwork || !artwork.contains(e.target))) {
+                dialog.classList.remove('active');
+                if (artwork) {
+                    artwork.classList.remove('selected');
+                }
+                selectedArtwork = null;
+            }
         });
 
         // Initialize

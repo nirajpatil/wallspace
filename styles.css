@@ -10,41 +10,40 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     color: #333;
+    margin: 0;
+    padding: 0;
 }
 
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
+.main-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
 }
 
-.header {
+.column-1,
+.column-2 {
+    width: 320px;
+    flex-shrink: 0;
     background: white;
+    overflow-y: auto;
     padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
 }
 
-.header h1 {
-    color: #2c3e50;
-    font-size: 2.5em;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.column-3 {
+    flex: 1;
+    background: white;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
     gap: 20px;
-    margin-bottom: 20px;
 }
 
 .control-panel {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background: transparent;
+    padding: 0;
+    margin-bottom: 20px;
 }
 
 .control-panel h3 {
@@ -101,11 +100,9 @@ button:hover {
 }
 
 .workspace {
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    padding: 20px;
-    margin-bottom: 20px;
+    background: transparent;
+    padding: 0;
+    flex: 1;
 }
 
 .wall-container {
@@ -114,6 +111,7 @@ button:hover {
     position: relative;
     overflow: hidden;
     min-height: 400px;
+    flex: 1;
 }
 
 .artwork {
@@ -179,16 +177,33 @@ button:hover {
     border-radius: 50%;
 }
 
-.artwork-controls {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 20px;
+/* Artwork Dialog */
+.artwork-dialog {
+    position: fixed;
     display: none;
+    z-index: 1000;
+    pointer-events: none;
 }
 
-.artwork-controls.active {
+.artwork-dialog.active {
     display: block;
+    pointer-events: auto;
+}
+
+.dialog-content {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid #667eea;
+    min-width: 320px;
+    max-width: 400px;
+}
+
+.dialog-content h4 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.1em;
 }
 
 .control-row {
@@ -199,10 +214,15 @@ button:hover {
 }
 
 .layouts-panel {
-    background: white;
+    background: #f8f9fa;
     padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+.layouts-panel h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.2em;
 }
 
 .layout-grid {
@@ -238,7 +258,7 @@ button:hover {
 .file-upload {
     border: 2px dashed #667eea;
     border-radius: 10px;
-    padding: 40px;
+    padding: 20px;
     text-align: center;
     background: #f8f9ff;
     cursor: pointer;
@@ -254,15 +274,15 @@ button:hover {
 }
 
 .uploaded-images {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 10px;
     margin-top: 20px;
 }
 
 .image-thumb {
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    height: 150px;
     object-fit: contain;
     border-radius: 8px;
     cursor: pointer;
