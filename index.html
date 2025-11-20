@@ -39,21 +39,15 @@
             </div>
         </div>
 
-        <div class="column-2">
-            <div class="control-panel">
-                <h3>Uploaded Images</h3>
-                <div class="file-upload" onclick="document.getElementById('fileInput').click()">
-                    <input type="file" id="fileInput" accept="image/*" multiple onchange="handleImageUpload(event)">
-                    <p>📁 Click to upload artwork images</p>
-                    <p style="font-size: 12px; color: #666; margin-top: 5px;">Supports JPG, PNG, GIF</p>
-                </div>
-                <div class="uploaded-images" id="uploadedImages"></div>
-            </div>
-        </div>
-
         <div class="column-3">
             <div class="workspace">
                 <div class="wall-container" id="wallContainer">
+                    <input type="file" id="fileInput" accept="image/*" multiple onchange="handleImageUpload(event)" style="display: none;">
+                    <button class="wall-icon upload-icon" onclick="document.getElementById('fileInput').click()" title="Upload Images">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
                     <button class="wall-icon save-icon" onclick="saveLayout()" title="Save Layout">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -341,19 +335,77 @@
 
         function handleImageUpload(event) {
             const files = event.target.files;
-            const container = document.getElementById('uploadedImages');
-            
-            for (let file of files) {
+            const wallContainer = document.getElementById('wallContainer');
+
+            // Get current number of images in the wall
+            const existingArtworks = document.querySelectorAll('.artwork').length;
+
+            // Layout configuration: 3 columns
+            const cols = 3;
+            const imageWidth = 6; // inches
+            const imageGap = 1; // inches between images
+            const startX = 2; // inches from left
+            const startY = 2; // inches from top
+
+            Array.from(files).forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = 'image-thumb';
-                    img.onclick = () => addToWall(e.target.result);
-                    container.appendChild(img);
+                    const totalIndex = existingArtworks + index;
+                    const row = Math.floor(totalIndex / cols);
+                    const col = totalIndex % cols;
+
+                    // Calculate position in inches
+                    const xInches = startX + (col * (imageWidth + imageGap));
+                    const yInches = startY + (row * (imageWidth + imageGap));
+
+                    // Convert to pixels
+                    const xPixels = unitsToPixels(xInches, 'inches');
+                    const yPixels = unitsToPixels(yInches, 'inches');
+
+                    // Create artwork element
+                    const artwork = document.createElement('div');
+                    artwork.className = 'artwork';
+                    artwork.id = 'artwork-' + (++artworkCounter);
+
+                    // Create a temporary image to get natural dimensions
+                    const tempImg = new Image();
+                    tempImg.onload = function() {
+                        const aspectRatio = tempImg.naturalWidth / tempImg.naturalHeight;
+                        artworkAspectRatios.set(artwork.id, aspectRatio);
+
+                        // Set size maintaining aspect ratio
+                        const defaultHeight = imageWidth / aspectRatio;
+                        const defaultWidthPixels = unitsToPixels(imageWidth, 'inches');
+                        const defaultHeightPixels = unitsToPixels(defaultHeight, 'inches');
+
+                        artwork.style.width = defaultWidthPixels + 'px';
+                        artwork.style.height = defaultHeightPixels + 'px';
+                    };
+                    tempImg.src = e.target.result;
+
+                    artwork.innerHTML = `
+                        <div class="frame" style="display: none;">
+                            <div class="matte" style="display: none;">
+                                <div class="image-container">
+                                    <img src="${e.target.result}" alt="Artwork">
+                                </div>
+                            </div>
+                        </div>
+                        <img src="${e.target.result}" alt="Artwork" class="direct-img">
+                        <div class="resize-handle"></div>
+                    `;
+
+                    artwork.style.left = xPixels + 'px';
+                    artwork.style.top = yPixels + 'px';
+                    const defaultSizePixels = unitsToPixels(imageWidth, 'inches');
+                    artwork.style.width = defaultSizePixels + 'px';
+                    artwork.style.height = defaultSizePixels + 'px';
+
+                    wallContainer.appendChild(artwork);
+                    setupArtworkEvents(artwork);
                 };
                 reader.readAsDataURL(file);
-            }
+            });
         }
 
         function addToWall(imageSrc) {
