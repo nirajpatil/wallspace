@@ -125,7 +125,6 @@ button:hover {
     min-height: 400px;
     max-width: 100%;
     height: auto;
-    flex: 1;
 }
 
 .wall-icon {
