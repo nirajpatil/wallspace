@@ -115,6 +115,153 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+}
+
+/* Zoom Control Button */
+.zoom-control-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 200;
+    padding: 0;
+    margin: 0;
+    color: #667eea;
+    transition: all 0.3s ease;
+}
+
+.zoom-control-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Room Perspective Wrapper */
+.room-perspective-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+    perspective-origin: center center;
+    transition: perspective 0.6s ease;
+}
+
+.room-perspective-wrapper.zoomed {
+    perspective: 2000px;
+}
+
+/* Room Container */
+.room-container {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease;
+}
+
+.room-container.zoomed {
+    transform: scale(0.4) translateZ(-400px) rotateX(5deg);
+}
+
+/* Room Surfaces */
+.room-ceiling,
+.room-floor,
+.room-left-wall,
+.room-right-wall {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    background: #e8e8e8;
+}
+
+.room-container.zoomed .room-ceiling,
+.room-container.zoomed .room-floor,
+.room-container.zoomed .room-left-wall,
+.room-container.zoomed .room-right-wall {
+    opacity: 1;
+}
+
+/* Ceiling */
+.room-ceiling {
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(to bottom, #f5f5f5, #e8e8e8);
+    transform-origin: bottom center;
+    transform: rotateX(90deg);
+    border-bottom: 2px solid #999;
+}
+
+.room-container.zoomed .room-ceiling {
+    transform: rotateX(90deg) translateZ(0px);
+}
+
+/* Floor */
+.room-floor {
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(to top, #d0d0d0, #e0e0e0);
+    transform-origin: top center;
+    transform: rotateX(-90deg);
+    top: 100%;
+    border-top: 2px solid #999;
+}
+
+.room-container.zoomed .room-floor {
+    transform: rotateX(-90deg) translateZ(0px);
+}
+
+/* Left Wall */
+.room-left-wall {
+    width: 500px;
+    height: 100%;
+    background: linear-gradient(to right, #d8d8d8, #e8e8e8);
+    transform-origin: right center;
+    transform: rotateY(90deg);
+    right: 100%;
+    border-right: 2px solid #999;
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 20px,
+        rgba(0, 0, 0, 0.08) 20px,
+        rgba(0, 0, 0, 0.08) 22px
+    );
+}
+
+.room-container.zoomed .room-left-wall {
+    transform: rotateY(90deg) translateZ(0px);
+}
+
+/* Right Wall */
+.room-right-wall {
+    width: 500px;
+    height: 100%;
+    background: linear-gradient(to left, #d8d8d8, #e8e8e8);
+    transform-origin: left center;
+    transform: rotateY(-90deg);
+    left: 100%;
+    border-left: 2px solid #999;
+    background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 20px,
+        rgba(0, 0, 0, 0.08) 20px,
+        rgba(0, 0, 0, 0.08) 22px
+    );
+}
+
+.room-container.zoomed .room-right-wall {
+    transform: rotateY(-90deg) translateZ(0px);
 }
 
 .wall-container {
