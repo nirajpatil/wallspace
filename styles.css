@@ -198,7 +198,7 @@ button:hover {
     background: linear-gradient(to bottom, #f5f5f5, #e8e8e8);
     transform-origin: bottom center;
     transform: rotateX(90deg);
-    border-bottom: 2px solid #999;
+    border-bottom: 3px solid #888;
 }
 
 .room-container.zoomed .room-ceiling {
@@ -213,7 +213,7 @@ button:hover {
     transform-origin: top center;
     transform: rotateX(-90deg);
     top: 100%;
-    border-top: 2px solid #999;
+    border-top: 3px solid #888;
 }
 
 .room-container.zoomed .room-floor {
@@ -228,7 +228,7 @@ button:hover {
     transform-origin: right center;
     transform: rotateY(90deg);
     right: 100%;
-    border-right: 2px solid #999;
+    border-right: 3px solid #888;
     background-image: repeating-linear-gradient(
         45deg,
         transparent,
@@ -250,7 +250,7 @@ button:hover {
     transform-origin: left center;
     transform: rotateY(-90deg);
     left: 100%;
-    border-left: 2px solid #999;
+    border-left: 3px solid #888;
     background-image: repeating-linear-gradient(
         -45deg,
         transparent,
@@ -272,6 +272,17 @@ button:hover {
     min-height: 400px;
     max-width: 100%;
     height: auto;
+}
+
+/* Disable all interactions in preview mode */
+.room-container.zoomed .wall-container {
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Hide wall control buttons in preview mode */
+.room-container.zoomed .wall-icon {
+    display: none !important;
 }
 
 .wall-icon {
@@ -332,6 +343,20 @@ button:hover {
     box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
 }
 
+/* Disable artwork interactions in preview mode */
+.room-container.zoomed .artwork {
+    cursor: default;
+    pointer-events: none;
+}
+
+.room-container.zoomed .artwork:hover {
+    border-color: transparent;
+}
+
+.room-container.zoomed .resize-handle {
+    display: none;
+}
+
 .artwork img {
     width: 100%;
     height: 100%;
@@ -388,6 +413,11 @@ button:hover {
     height: 100%;
     pointer-events: none;
     z-index: 5;
+}
+
+/* Hide distance guides in preview mode */
+.room-container.zoomed .distance-guides-svg {
+    display: none;
 }
 
 .distance-guides-svg line {

@@ -477,6 +477,9 @@
 
         function setupArtworkEvents(artwork) {
             artwork.addEventListener('mousedown', function(e) {
+                // Prevent interactions in preview mode
+                if (isPreviewMode) return;
+
                 if (e.target.classList.contains('resize-handle')) {
                     isResizing = true;
                 } else {
@@ -485,7 +488,7 @@
                     dragOffset.x = e.clientX - rect.left;
                     dragOffset.y = e.clientY - rect.top;
                 }
-                
+
                 selectArtwork(artwork);
                 e.preventDefault();
             });
@@ -901,6 +904,13 @@
 
         // Global mouse events for dragging and resizing
         document.addEventListener('mousemove', function(e) {
+            // Prevent all interactions in preview mode
+            if (isPreviewMode) {
+                isDragging = false;
+                isResizing = false;
+                return;
+            }
+
             if (isDragging && selectedArtwork) {
                 const wallContainer = document.getElementById('wallContainer');
                 const wallRect = wallContainer.getBoundingClientRect();
@@ -958,12 +968,17 @@
         });
 
         document.addEventListener('mouseup', function() {
-            isDragging = false;
-            isResizing = false;
+            if (!isPreviewMode) {
+                isDragging = false;
+                isResizing = false;
+            }
         });
 
         // Close dialog when clicking outside
         document.addEventListener('click', function(e) {
+            // Don't process clicks in preview mode
+            if (isPreviewMode) return;
+
             const dialog = document.getElementById('artworkDialog');
             const artwork = selectedArtwork;
 
@@ -988,13 +1003,38 @@
         });
 
         // Room View Toggle Functions
+        let isPreviewMode = false;
+
         function toggleRoomView() {
             const roomPerspective = document.getElementById('roomPerspective');
             const roomContainer = document.getElementById('roomContainer');
+            const controlPanel = document.querySelector('.column-1');
+            const artworkDialog = document.getElementById('artworkDialog');
 
             // Toggle the zoomed class
             roomPerspective.classList.toggle('zoomed');
             roomContainer.classList.toggle('zoomed');
+            isPreviewMode = !isPreviewMode;
+
+            if (isPreviewMode) {
+                // Entering preview mode - disable all editing
+                controlPanel.style.pointerEvents = 'none';
+                controlPanel.style.opacity = '0.5';
+
+                // Hide and deselect artwork dialog
+                artworkDialog.classList.remove('active');
+                if (selectedArtwork) {
+                    selectedArtwork.classList.remove('selected');
+                }
+
+                // Clear any ongoing drag/resize operations
+                isDragging = false;
+                isResizing = false;
+            } else {
+                // Exiting preview mode - re-enable all editing
+                controlPanel.style.pointerEvents = 'auto';
+                controlPanel.style.opacity = '1';
+            }
         }
 
         // Distance Guides Functions
