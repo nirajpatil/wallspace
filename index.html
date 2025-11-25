@@ -330,8 +330,9 @@
             const heightInches = units === 'cm' ? cmToInches(height) : height;
 
             // Get the workspace container width to scale appropriately
-            const workspace = wallContainer.parentElement;
-            const maxWidth = workspace.offsetWidth;
+            // Use the workspace div, not the immediate parent which is now room-container
+            const workspace = document.querySelector('.workspace');
+            const maxWidth = workspace.offsetWidth - 40; // Account for padding
             const maxHeight = window.innerHeight - 60; // Use browser window height minus padding for controls
 
             // Calculate scale to fit within available space
@@ -342,7 +343,7 @@
             wallContainer.style.width = displayWidth + 'px';
             wallContainer.style.height = displayHeight + 'px';
             wallContainer.style.backgroundColor = color;
-            
+
             // Set background image if available
             if (wallBackgroundImage) {
                 wallContainer.style.backgroundImage = `url(${wallBackgroundImage})`;
