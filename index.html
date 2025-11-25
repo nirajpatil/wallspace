@@ -46,27 +46,42 @@
 
         <div class="column-3">
             <div class="workspace">
-                <div class="wall-container" id="wallContainer">
-                    <svg id="distanceGuidesSVG" class="distance-guides-svg"></svg>
-                    <input type="file" id="fileInput" accept="image/*" multiple onchange="handleImageUpload(event)" style="display: none;">
-                    <button class="wall-icon upload-icon" onclick="document.getElementById('fileInput').click()" title="Upload Images">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <button class="wall-icon save-icon" onclick="saveLayout()" title="Save Layout">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M17 21V13H7V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M7 3V8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <button class="wall-icon delete-icon" onclick="clearWall()" title="Clear Wall">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 6H5H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
+                <button class="zoom-control-btn" onclick="toggleRoomView()" title="Toggle Room View">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 11h6M11 8v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div class="room-perspective-wrapper" id="roomPerspective">
+                    <div class="room-container" id="roomContainer">
+                        <div class="room-ceiling"></div>
+                        <div class="room-left-wall"></div>
+                        <div class="room-right-wall"></div>
+                        <div class="room-floor"></div>
+                        <div class="wall-container" id="wallContainer">
+                            <svg id="distanceGuidesSVG" class="distance-guides-svg"></svg>
+                            <input type="file" id="fileInput" accept="image/*" multiple onchange="handleImageUpload(event)" style="display: none;">
+                            <button class="wall-icon upload-icon" onclick="document.getElementById('fileInput').click()" title="Upload Images">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <button class="wall-icon save-icon" onclick="saveLayout()" title="Save Layout">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M17 21V13H7V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M7 3V8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <button class="wall-icon delete-icon" onclick="clearWall()" title="Clear Wall">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 6H5H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -315,8 +330,9 @@
             const heightInches = units === 'cm' ? cmToInches(height) : height;
 
             // Get the workspace container width to scale appropriately
-            const workspace = wallContainer.parentElement;
-            const maxWidth = workspace.offsetWidth;
+            // Use the workspace div, not the immediate parent which is now room-container
+            const workspace = document.querySelector('.workspace');
+            const maxWidth = workspace.offsetWidth - 40; // Account for padding
             const maxHeight = window.innerHeight - 60; // Use browser window height minus padding for controls
 
             // Calculate scale to fit within available space
@@ -327,7 +343,7 @@
             wallContainer.style.width = displayWidth + 'px';
             wallContainer.style.height = displayHeight + 'px';
             wallContainer.style.backgroundColor = color;
-            
+
             // Set background image if available
             if (wallBackgroundImage) {
                 wallContainer.style.backgroundImage = `url(${wallBackgroundImage})`;
@@ -462,6 +478,9 @@
 
         function setupArtworkEvents(artwork) {
             artwork.addEventListener('mousedown', function(e) {
+                // Prevent interactions in preview mode
+                if (isPreviewMode) return;
+
                 if (e.target.classList.contains('resize-handle')) {
                     isResizing = true;
                 } else {
@@ -470,7 +489,7 @@
                     dragOffset.x = e.clientX - rect.left;
                     dragOffset.y = e.clientY - rect.top;
                 }
-                
+
                 selectArtwork(artwork);
                 e.preventDefault();
             });
@@ -886,6 +905,13 @@
 
         // Global mouse events for dragging and resizing
         document.addEventListener('mousemove', function(e) {
+            // Prevent all interactions in preview mode
+            if (isPreviewMode) {
+                isDragging = false;
+                isResizing = false;
+                return;
+            }
+
             if (isDragging && selectedArtwork) {
                 const wallContainer = document.getElementById('wallContainer');
                 const wallRect = wallContainer.getBoundingClientRect();
@@ -943,12 +969,17 @@
         });
 
         document.addEventListener('mouseup', function() {
-            isDragging = false;
-            isResizing = false;
+            if (!isPreviewMode) {
+                isDragging = false;
+                isResizing = false;
+            }
         });
 
         // Close dialog when clicking outside
         document.addEventListener('click', function(e) {
+            // Don't process clicks in preview mode
+            if (isPreviewMode) return;
+
             const dialog = document.getElementById('artworkDialog');
             const artwork = selectedArtwork;
 
@@ -971,6 +1002,41 @@
         window.addEventListener('resize', function() {
             updateWall();
         });
+
+        // Room View Toggle Functions
+        let isPreviewMode = false;
+
+        function toggleRoomView() {
+            const roomPerspective = document.getElementById('roomPerspective');
+            const roomContainer = document.getElementById('roomContainer');
+            const controlPanel = document.querySelector('.column-1');
+            const artworkDialog = document.getElementById('artworkDialog');
+
+            // Toggle the zoomed class
+            roomPerspective.classList.toggle('zoomed');
+            roomContainer.classList.toggle('zoomed');
+            isPreviewMode = !isPreviewMode;
+
+            if (isPreviewMode) {
+                // Entering preview mode - disable all editing
+                controlPanel.style.pointerEvents = 'none';
+                controlPanel.style.opacity = '0.5';
+
+                // Hide and deselect artwork dialog
+                artworkDialog.classList.remove('active');
+                if (selectedArtwork) {
+                    selectedArtwork.classList.remove('selected');
+                }
+
+                // Clear any ongoing drag/resize operations
+                isDragging = false;
+                isResizing = false;
+            } else {
+                // Exiting preview mode - re-enable all editing
+                controlPanel.style.pointerEvents = 'auto';
+                controlPanel.style.opacity = '1';
+            }
+        }
 
         // Distance Guides Functions
         function toggleDistanceGuides() {
