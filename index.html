@@ -1022,44 +1022,118 @@
             const bottomCenterX = centerX;
             const bottomCenterY = artworkBottom;
 
-            // Calculate distances in pixels
-            const distanceToLeft = artworkLeft;
-            const distanceToRight = wallWidth - artworkRight;
-            const distanceToTop = artworkTop;
-            const distanceToBottom = wallHeight - artworkBottom;
+            // Find nearest artworks in each direction
+            const otherArtworks = Array.from(document.querySelectorAll('.artwork')).filter(art => art !== selectedArtwork);
+            let nearestLeft = null, nearestRight = null, nearestTop = null, nearestBottom = null;
+            let nearestLeftDist = Infinity, nearestRightDist = Infinity, nearestTopDist = Infinity, nearestBottomDist = Infinity;
 
-            // Convert to inches and cm
-            const distanceToLeftInches = pixelsToUnits(distanceToLeft, 'inches');
-            const distanceToLeftCm = pixelsToUnits(distanceToLeft, 'cm');
-            const distanceToRightInches = pixelsToUnits(distanceToRight, 'inches');
-            const distanceToRightCm = pixelsToUnits(distanceToRight, 'cm');
-            const distanceToTopInches = pixelsToUnits(distanceToTop, 'inches');
-            const distanceToTopCm = pixelsToUnits(distanceToTop, 'cm');
-            const distanceToBottomInches = pixelsToUnits(distanceToBottom, 'inches');
-            const distanceToBottomCm = pixelsToUnits(distanceToBottom, 'cm');
+            otherArtworks.forEach(otherArt => {
+                const otherRect = otherArt.getBoundingClientRect();
+                const otherLeft = otherRect.left - wallRect.left;
+                const otherTop = otherRect.top - wallRect.top;
+                const otherRight = otherLeft + otherRect.width;
+                const otherBottom = otherTop + otherRect.height;
 
-            // Draw guide to left wall (from left-center of artwork)
-            if (distanceToLeft > 0) {
+                // Check if artwork is to the left (with vertical overlap)
+                if (otherRight <= artworkLeft) {
+                    const dist = artworkLeft - otherRight;
+                    const verticalOverlap = Math.max(0, Math.min(artworkBottom, otherBottom) - Math.max(artworkTop, otherTop));
+                    if (verticalOverlap > 0 && dist < nearestLeftDist) {
+                        nearestLeftDist = dist;
+                        nearestLeft = { otherArt, otherRect, otherLeft, otherTop, otherRight, otherBottom };
+                    }
+                }
+
+                // Check if artwork is to the right (with vertical overlap)
+                if (otherLeft >= artworkRight) {
+                    const dist = otherLeft - artworkRight;
+                    const verticalOverlap = Math.max(0, Math.min(artworkBottom, otherBottom) - Math.max(artworkTop, otherTop));
+                    if (verticalOverlap > 0 && dist < nearestRightDist) {
+                        nearestRightDist = dist;
+                        nearestRight = { otherArt, otherRect, otherLeft, otherTop, otherRight, otherBottom };
+                    }
+                }
+
+                // Check if artwork is above (with horizontal overlap)
+                if (otherBottom <= artworkTop) {
+                    const dist = artworkTop - otherBottom;
+                    const horizontalOverlap = Math.max(0, Math.min(artworkRight, otherRight) - Math.max(artworkLeft, otherLeft));
+                    if (horizontalOverlap > 0 && dist < nearestTopDist) {
+                        nearestTopDist = dist;
+                        nearestTop = { otherArt, otherRect, otherLeft, otherTop, otherRight, otherBottom };
+                    }
+                }
+
+                // Check if artwork is below (with horizontal overlap)
+                if (otherTop >= artworkBottom) {
+                    const dist = otherTop - artworkBottom;
+                    const horizontalOverlap = Math.max(0, Math.min(artworkRight, otherRight) - Math.max(artworkLeft, otherLeft));
+                    if (horizontalOverlap > 0 && dist < nearestBottomDist) {
+                        nearestBottomDist = dist;
+                        nearestBottom = { otherArt, otherRect, otherLeft, otherTop, otherRight, otherBottom };
+                    }
+                }
+            });
+
+            // Draw guides to nearest artworks or walls
+            // Left side
+            if (nearestLeft) {
+                const distInches = pixelsToUnits(nearestLeftDist, 'inches');
+                const distCm = pixelsToUnits(nearestLeftDist, 'cm');
+                const otherCenterY = nearestLeft.otherTop + (nearestLeft.otherRect.height / 2);
+                const guideY = (centerY + otherCenterY) / 2; // Use midpoint of both centers
+                drawGuide(svg, nearestLeft.otherRight, guideY, leftCenterX, guideY,
+                         distInches, distCm, 'horizontal');
+            } else if (artworkLeft > 0) {
+                const distInches = pixelsToUnits(artworkLeft, 'inches');
+                const distCm = pixelsToUnits(artworkLeft, 'cm');
                 drawGuide(svg, 0, leftCenterY, leftCenterX, leftCenterY,
-                         distanceToLeftInches, distanceToLeftCm, 'horizontal');
+                         distInches, distCm, 'horizontal');
             }
 
-            // Draw guide to right wall (from right-center of artwork)
-            if (distanceToRight > 0) {
+            // Right side
+            if (nearestRight) {
+                const distInches = pixelsToUnits(nearestRightDist, 'inches');
+                const distCm = pixelsToUnits(nearestRightDist, 'cm');
+                const otherCenterY = nearestRight.otherTop + (nearestRight.otherRect.height / 2);
+                const guideY = (centerY + otherCenterY) / 2;
+                drawGuide(svg, rightCenterX, guideY, nearestRight.otherLeft, guideY,
+                         distInches, distCm, 'horizontal');
+            } else if (artworkRight < wallWidth) {
+                const distInches = pixelsToUnits(wallWidth - artworkRight, 'inches');
+                const distCm = pixelsToUnits(wallWidth - artworkRight, 'cm');
                 drawGuide(svg, rightCenterX, rightCenterY, wallWidth, rightCenterY,
-                         distanceToRightInches, distanceToRightCm, 'horizontal');
+                         distInches, distCm, 'horizontal');
             }
 
-            // Draw guide to top wall (from top-center of artwork)
-            if (distanceToTop > 0) {
+            // Top side
+            if (nearestTop) {
+                const distInches = pixelsToUnits(nearestTopDist, 'inches');
+                const distCm = pixelsToUnits(nearestTopDist, 'cm');
+                const otherCenterX = nearestTop.otherLeft + (nearestTop.otherRect.width / 2);
+                const guideX = (centerX + otherCenterX) / 2;
+                drawGuide(svg, guideX, nearestTop.otherBottom, guideX, topCenterY,
+                         distInches, distCm, 'vertical');
+            } else if (artworkTop > 0) {
+                const distInches = pixelsToUnits(artworkTop, 'inches');
+                const distCm = pixelsToUnits(artworkTop, 'cm');
                 drawGuide(svg, topCenterX, 0, topCenterX, topCenterY,
-                         distanceToTopInches, distanceToTopCm, 'vertical');
+                         distInches, distCm, 'vertical');
             }
 
-            // Draw guide to bottom wall (from bottom-center of artwork)
-            if (distanceToBottom > 0) {
+            // Bottom side
+            if (nearestBottom) {
+                const distInches = pixelsToUnits(nearestBottomDist, 'inches');
+                const distCm = pixelsToUnits(nearestBottomDist, 'cm');
+                const otherCenterX = nearestBottom.otherLeft + (nearestBottom.otherRect.width / 2);
+                const guideX = (centerX + otherCenterX) / 2;
+                drawGuide(svg, guideX, bottomCenterY, guideX, nearestBottom.otherTop,
+                         distInches, distCm, 'vertical');
+            } else if (artworkBottom < wallHeight) {
+                const distInches = pixelsToUnits(wallHeight - artworkBottom, 'inches');
+                const distCm = pixelsToUnits(wallHeight - artworkBottom, 'cm');
                 drawGuide(svg, bottomCenterX, bottomCenterY, bottomCenterX, wallHeight,
-                         distanceToBottomInches, distanceToBottomCm, 'vertical');
+                         distInches, distCm, 'vertical');
             }
         }
 
