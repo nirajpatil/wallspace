@@ -35,6 +35,11 @@
                     <input type="file" id="wallImageUpload" accept="image/*" onchange="handleWallImageUpload(event)">
                     <button onclick="removeWallImage()" style="margin-top: 5px; font-size: 12px; padding: 5px 10px;">Remove Image</button>
                 </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="showDistanceGuides" checked onchange="toggleDistanceGuides()"> Show Distance Guides
+                    </label>
+                </div>
                 <button onclick="updateWall()">Update Wall</button>
             </div>
         </div>
@@ -42,6 +47,7 @@
         <div class="column-3">
             <div class="workspace">
                 <div class="wall-container" id="wallContainer">
+                    <svg id="distanceGuidesSVG" class="distance-guides-svg"></svg>
                     <input type="file" id="fileInput" accept="image/*" multiple onchange="handleImageUpload(event)" style="display: none;">
                     <button class="wall-icon upload-icon" onclick="document.getElementById('fileInput').click()" title="Upload Images">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -489,6 +495,9 @@
 
             // Update control values based on current artwork
             updateControlsFromArtwork(artwork);
+
+            // Update distance guides
+            updateDistanceGuides();
         }
 
         function positionDialog(artwork, dialog) {
@@ -655,6 +664,9 @@
                 selectedArtwork.style.width = artworkWidthPixels + 'px';
                 selectedArtwork.style.height = artworkHeightPixels + 'px';
             }
+
+            // Update distance guides when artwork dimensions change
+            updateDistanceGuides();
         }
 
         function deleteSelected() {
@@ -662,6 +674,9 @@
                 selectedArtwork.remove();
                 selectedArtwork = null;
                 document.getElementById('artworkDialog').classList.remove('active');
+
+                // Clear distance guides when artwork is deleted
+                updateDistanceGuides();
             }
         }
 
@@ -890,6 +905,9 @@
                 if (dialog.classList.contains('active')) {
                     positionDialog(selectedArtwork, dialog);
                 }
+
+                // Update distance guides while dragging
+                updateDistanceGuides();
             } else if (isResizing && selectedArtwork) {
                 const wallContainer = document.getElementById('wallContainer');
                 const wallRect = wallContainer.getBoundingClientRect();
@@ -918,6 +936,9 @@
                 if (dialog.classList.contains('active')) {
                     positionDialog(selectedArtwork, dialog);
                 }
+
+                // Update distance guides while resizing
+                updateDistanceGuides();
             }
         });
 
@@ -940,6 +961,9 @@
                     artwork.classList.remove('selected');
                 }
                 selectedArtwork = null;
+
+                // Clear distance guides when deselecting
+                updateDistanceGuides();
             }
         });
 
@@ -947,6 +971,131 @@
         window.addEventListener('resize', function() {
             updateWall();
         });
+
+        // Distance Guides Functions
+        function toggleDistanceGuides() {
+            const enabled = document.getElementById('showDistanceGuides').checked;
+            const svg = document.getElementById('distanceGuidesSVG');
+
+            if (enabled && selectedArtwork) {
+                updateDistanceGuides();
+            } else {
+                svg.innerHTML = ''; // Clear guides
+            }
+        }
+
+        function updateDistanceGuides() {
+            const svg = document.getElementById('distanceGuidesSVG');
+            const enabled = document.getElementById('showDistanceGuides').checked;
+
+            // Clear existing guides
+            svg.innerHTML = '';
+
+            // Only show guides if enabled and artwork is selected
+            if (!enabled || !selectedArtwork) {
+                return;
+            }
+
+            const wallContainer = document.getElementById('wallContainer');
+            const wallWidth = wallContainer.offsetWidth;
+            const wallHeight = wallContainer.offsetHeight;
+
+            // Get artwork bounds (includes frame and matte if present)
+            const artworkRect = selectedArtwork.getBoundingClientRect();
+            const wallRect = wallContainer.getBoundingClientRect();
+
+            // Calculate artwork position relative to wall
+            const artworkLeft = artworkRect.left - wallRect.left;
+            const artworkTop = artworkRect.top - wallRect.top;
+            const artworkRight = artworkLeft + artworkRect.width;
+            const artworkBottom = artworkTop + artworkRect.height;
+
+            // Calculate center points of each side
+            const centerX = artworkLeft + (artworkRect.width / 2);
+            const centerY = artworkTop + (artworkRect.height / 2);
+            const leftCenterX = artworkLeft;
+            const leftCenterY = centerY;
+            const rightCenterX = artworkRight;
+            const rightCenterY = centerY;
+            const topCenterX = centerX;
+            const topCenterY = artworkTop;
+            const bottomCenterX = centerX;
+            const bottomCenterY = artworkBottom;
+
+            // Calculate distances in pixels
+            const distanceToLeft = artworkLeft;
+            const distanceToRight = wallWidth - artworkRight;
+            const distanceToTop = artworkTop;
+            const distanceToBottom = wallHeight - artworkBottom;
+
+            // Convert to inches and cm
+            const distanceToLeftInches = pixelsToUnits(distanceToLeft, 'inches');
+            const distanceToLeftCm = pixelsToUnits(distanceToLeft, 'cm');
+            const distanceToRightInches = pixelsToUnits(distanceToRight, 'inches');
+            const distanceToRightCm = pixelsToUnits(distanceToRight, 'cm');
+            const distanceToTopInches = pixelsToUnits(distanceToTop, 'inches');
+            const distanceToTopCm = pixelsToUnits(distanceToTop, 'cm');
+            const distanceToBottomInches = pixelsToUnits(distanceToBottom, 'inches');
+            const distanceToBottomCm = pixelsToUnits(distanceToBottom, 'cm');
+
+            // Draw guide to left wall (from left-center of artwork)
+            if (distanceToLeft > 0) {
+                drawGuide(svg, 0, leftCenterY, leftCenterX, leftCenterY,
+                         distanceToLeftInches, distanceToLeftCm, 'horizontal');
+            }
+
+            // Draw guide to right wall (from right-center of artwork)
+            if (distanceToRight > 0) {
+                drawGuide(svg, rightCenterX, rightCenterY, wallWidth, rightCenterY,
+                         distanceToRightInches, distanceToRightCm, 'horizontal');
+            }
+
+            // Draw guide to top wall (from top-center of artwork)
+            if (distanceToTop > 0) {
+                drawGuide(svg, topCenterX, 0, topCenterX, topCenterY,
+                         distanceToTopInches, distanceToTopCm, 'vertical');
+            }
+
+            // Draw guide to bottom wall (from bottom-center of artwork)
+            if (distanceToBottom > 0) {
+                drawGuide(svg, bottomCenterX, bottomCenterY, bottomCenterX, wallHeight,
+                         distanceToBottomInches, distanceToBottomCm, 'vertical');
+            }
+        }
+
+        function drawGuide(svg, x1, y1, x2, y2, distanceInches, distanceCm, orientation) {
+            // Create line element
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            svg.appendChild(line);
+
+            // Calculate midpoint for text label
+            const midX = (x1 + x2) / 2;
+            const midY = (y1 + y2) / 2;
+
+            // Format distance text (show both inches and cm)
+            const distanceText = `${distanceInches.toFixed(1)}" / ${distanceCm.toFixed(1)}cm`;
+
+            // Create text element
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', midX);
+            text.setAttribute('y', midY);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dominant-baseline', 'middle');
+            text.textContent = distanceText;
+
+            // Adjust text position to avoid overlapping with line
+            if (orientation === 'horizontal') {
+                text.setAttribute('y', midY - 10); // Position text above the line
+            } else {
+                text.setAttribute('x', midX + 30); // Position text to the right of the line
+            }
+
+            svg.appendChild(text);
+        }
 
         // Initialize
         updateWall();

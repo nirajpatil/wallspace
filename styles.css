@@ -232,6 +232,29 @@ button:hover {
     border-radius: 50%;
 }
 
+/* Distance Guides SVG */
+.distance-guides-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.distance-guides-svg line {
+    stroke: #c0c0c0;
+    stroke-width: 1;
+}
+
+.distance-guides-svg text {
+    fill: #808080;
+    font-size: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+}
+
 /* Artwork Dialog */
 .artwork-dialog {
     position: fixed;
