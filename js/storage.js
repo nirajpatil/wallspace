@@ -68,10 +68,9 @@ function saveLayoutsToStorage() {
 function saveLayout() {
     const name = `Gallery ${savedLayouts.length + 1}`;
     const wallSettings = {
-        width: document.getElementById('wallWidth').value,
-        height: document.getElementById('wallHeight').value,
+        width: document.getElementById('wallWidthInches').value,
+        height: document.getElementById('wallHeightInches').value,
         color: document.getElementById('wallColor').value,
-        units: document.getElementById('wallUnits').value,
         backgroundImage: wallBackgroundImage
     };
 
@@ -129,16 +128,15 @@ function saveLayout() {
 function loadLayout(index) {
     const layout = savedLayouts[index];
 
-    // Set wall settings
-    document.getElementById('wallWidth').value = layout.wallSettings.width;
-    document.getElementById('wallHeight').value = layout.wallSettings.height;
-    document.getElementById('wallColor').value = layout.wallSettings.color;
+    // Set wall settings (values are stored in inches)
+    const widthInches = parseFloat(layout.wallSettings.width);
+    const heightInches = parseFloat(layout.wallSettings.height);
 
-    // Set wall units if saved
-    if (layout.wallSettings.units) {
-        document.getElementById('wallUnits').value = layout.wallSettings.units;
-        updateWallUnits();
-    }
+    document.getElementById('wallWidthInches').value = widthInches;
+    document.getElementById('wallWidthCm').value = inchesToCm(widthInches).toFixed(1);
+    document.getElementById('wallHeightInches').value = heightInches;
+    document.getElementById('wallHeightCm').value = inchesToCm(heightInches).toFixed(1);
+    document.getElementById('wallColor').value = layout.wallSettings.color;
 
     // Set wall background image if saved
     if (layout.wallSettings.backgroundImage) {
