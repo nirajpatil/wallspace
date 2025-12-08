@@ -172,30 +172,10 @@
     <!-- Phase 1: Foundation modules -->
     <script src="js/utils.js"></script>
     <script src="js/state.js"></script>
+    <!-- Phase 2: Wall module -->
+    <script src="js/wall.js"></script>
 
     <script>
-        function updateWallUnits() {
-            const newUnits = document.getElementById('wallUnits').value;
-            const wallWidth = parseFloat(document.getElementById('wallWidth').value);
-            const wallHeight = parseFloat(document.getElementById('wallHeight').value);
-            
-            if (currentUnits !== newUnits) {
-                // Convert existing values
-                if (newUnits === 'cm') {
-                    document.getElementById('wallWidth').value = inchesToCm(wallWidth).toFixed(1);
-                    document.getElementById('wallHeight').value = inchesToCm(wallHeight).toFixed(1);
-                } else {
-                    document.getElementById('wallWidth').value = cmToInches(wallWidth).toFixed(1);
-                    document.getElementById('wallHeight').value = cmToInches(wallHeight).toFixed(1);
-                }
-                currentUnits = newUnits;
-            }
-            
-            // Update unit labels
-            document.getElementById('wallWidthUnit').textContent = newUnits;
-            document.getElementById('wallHeightUnit').textContent = newUnits;
-        }
-
         function updateArtworkUnits() {
             const newUnits = document.getElementById('artworkUnits').value;
             const artworkWidth = parseFloat(document.getElementById('artworkWidth').value);
@@ -223,24 +203,6 @@
             if (selectedArtwork) {
                 updateSelectedArtwork();
             }
-        }
-
-        function handleWallImageUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    wallBackgroundImage = e.target.result;
-                    updateWall();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function removeWallImage() {
-            wallBackgroundImage = null;
-            document.getElementById('wallImageUpload').value = '';
-            updateWall();
         }
 
         // Load saved layouts from localStorage
@@ -284,43 +246,6 @@
                 console.error('Error saving to localStorage:', error);
                 alert('Unable to save layout. Your browser storage might be full.');
                 return false;
-            }
-        }
-
-        function updateWall() {
-            const wallContainer = document.getElementById('wallContainer');
-            const units = document.getElementById('wallUnits').value;
-            const width = parseFloat(document.getElementById('wallWidth').value);
-            const height = parseFloat(document.getElementById('wallHeight').value);
-            const color = document.getElementById('wallColor').value;
-
-            // Convert to inches for calculation
-            const widthInches = units === 'cm' ? cmToInches(width) : width;
-            const heightInches = units === 'cm' ? cmToInches(height) : height;
-
-            // Get the workspace container width to scale appropriately
-            // Use the workspace div, not the immediate parent which is now room-container
-            const workspace = document.querySelector('.workspace');
-            const maxWidth = workspace.offsetWidth - 40; // Account for padding
-            const maxHeight = window.innerHeight - 60; // Use browser window height minus padding for controls
-
-            // Calculate scale to fit within available space
-            wallScale = Math.min(maxWidth / widthInches, maxHeight / heightInches);
-            const displayWidth = widthInches * wallScale;
-            const displayHeight = heightInches * wallScale;
-
-            wallContainer.style.width = displayWidth + 'px';
-            wallContainer.style.height = displayHeight + 'px';
-            wallContainer.style.backgroundColor = color;
-
-            // Set background image if available
-            if (wallBackgroundImage) {
-                wallContainer.style.backgroundImage = `url(${wallBackgroundImage})`;
-                wallContainer.style.backgroundSize = 'cover';
-                wallContainer.style.backgroundPosition = 'center';
-                wallContainer.style.backgroundRepeat = 'no-repeat';
-            } else {
-                wallContainer.style.backgroundImage = 'none';
             }
         }
 
