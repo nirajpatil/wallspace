@@ -169,42 +169,11 @@
         </div>
     </div>
 
+    <!-- Phase 1: Foundation modules -->
+    <script src="js/utils.js"></script>
+    <script src="js/state.js"></script>
+
     <script>
-        let artworkCounter = 0;
-        let selectedArtwork = null;
-        let isDragging = false;
-        let isResizing = false;
-        let dragOffset = { x: 0, y: 0 };
-        let savedLayouts = [];
-        let currentUnits = 'inches';
-        let wallScale = 1;
-        let wallBackgroundImage = null;
-        let currentArtworkUnits = 'inches';
-        let artworkAspectRatios = new Map(); // Store original aspect ratios
-
-        // Conversion functions
-        function inchesToCm(inches) {
-            return inches * 2.54;
-        }
-        
-        function cmToInches(cm) {
-            return cm / 2.54;
-        }
-        
-        function unitsToPixels(value, units) {
-            // Convert to inches first if needed
-            const inches = units === 'cm' ? cmToInches(value) : value;
-            // Scale based on current wall scale (pixels per inch)
-            return inches * wallScale;
-        }
-        
-        function pixelsToUnits(pixels, units) {
-            // Convert to inches first
-            const inches = pixels / wallScale;
-            // Convert to target units
-            return units === 'cm' ? inchesToCm(inches) : inches;
-        }
-
         function updateWallUnits() {
             const newUnits = document.getElementById('wallUnits').value;
             const wallWidth = parseFloat(document.getElementById('wallWidth').value);
@@ -1004,8 +973,6 @@
         });
 
         // Room View Toggle Functions
-        let isPreviewMode = false;
-
         function toggleRoomView() {
             const roomPerspective = document.getElementById('roomPerspective');
             const roomContainer = document.getElementById('roomContainer');
