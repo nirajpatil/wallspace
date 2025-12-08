@@ -149,8 +149,8 @@ function loadLayout(index) {
 
     updateWall();
 
-    // Clear existing artworks
-    clearWall();
+    // Clear existing artworks (without confirmation)
+    clearArtworks();
 
     // Add artworks
     layout.artworks.forEach(artworkData => {
@@ -217,11 +217,19 @@ function deleteLayout(index) {
 function clearWall() {
     if (document.querySelectorAll('.artwork').length > 0) {
         if (confirm('Are you sure you want to clear all artwork from the wall?')) {
-            document.getElementById('wallContainer').innerHTML = '';
+            // Only remove artwork elements, not the buttons or other UI
+            document.querySelectorAll('.artwork').forEach(artwork => artwork.remove());
             selectedArtwork = null;
             document.getElementById('artworkDialog').classList.remove('active');
         }
     }
+}
+
+// Internal function to clear artworks without confirmation (used by loadLayout)
+function clearArtworks() {
+    document.querySelectorAll('.artwork').forEach(artwork => artwork.remove());
+    selectedArtwork = null;
+    document.getElementById('artworkDialog').classList.remove('active');
 }
 
 // Export all layouts as a JSON file
