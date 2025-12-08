@@ -18,14 +18,13 @@
 // Update wall display based on current settings
 function updateWall() {
     const wallContainer = document.getElementById('wallContainer');
-    const units = document.getElementById('wallUnits').value;
-    const width = parseFloat(document.getElementById('wallWidth').value);
-    const height = parseFloat(document.getElementById('wallHeight').value);
+    const width = parseFloat(document.getElementById('wallWidthInches').value);
+    const height = parseFloat(document.getElementById('wallHeightInches').value);
     const color = document.getElementById('wallColor').value;
 
-    // Convert to inches for calculation
-    const widthInches = units === 'cm' ? cmToInches(width) : width;
-    const heightInches = units === 'cm' ? cmToInches(height) : height;
+    // Width and height are already in inches
+    const widthInches = width;
+    const heightInches = height;
 
     // Get the workspace container width to scale appropriately
     // Use the workspace div, not the immediate parent which is now room-container
@@ -53,27 +52,40 @@ function updateWall() {
     }
 }
 
-// Handle wall unit conversion (inches <-> cm)
-function updateWallUnits() {
-    const newUnits = document.getElementById('wallUnits').value;
-    const wallWidth = parseFloat(document.getElementById('wallWidth').value);
-    const wallHeight = parseFloat(document.getElementById('wallHeight').value);
-
-    if (currentUnits !== newUnits) {
-        // Convert existing values
-        if (newUnits === 'cm') {
-            document.getElementById('wallWidth').value = inchesToCm(wallWidth).toFixed(1);
-            document.getElementById('wallHeight').value = inchesToCm(wallHeight).toFixed(1);
-        } else {
-            document.getElementById('wallWidth').value = cmToInches(wallWidth).toFixed(1);
-            document.getElementById('wallHeight').value = cmToInches(wallHeight).toFixed(1);
-        }
-        currentUnits = newUnits;
+// Update wall width from inches input
+function updateWallWidthFromInches() {
+    const inchesValue = parseFloat(document.getElementById('wallWidthInches').value);
+    if (!isNaN(inchesValue)) {
+        const cmValue = inchesToCm(inchesValue);
+        document.getElementById('wallWidthCm').value = cmValue.toFixed(1);
     }
+}
 
-    // Update unit labels
-    document.getElementById('wallWidthUnit').textContent = newUnits;
-    document.getElementById('wallHeightUnit').textContent = newUnits;
+// Update wall width from cm input
+function updateWallWidthFromCm() {
+    const cmValue = parseFloat(document.getElementById('wallWidthCm').value);
+    if (!isNaN(cmValue)) {
+        const inchesValue = cmToInches(cmValue);
+        document.getElementById('wallWidthInches').value = inchesValue.toFixed(1);
+    }
+}
+
+// Update wall height from inches input
+function updateWallHeightFromInches() {
+    const inchesValue = parseFloat(document.getElementById('wallHeightInches').value);
+    if (!isNaN(inchesValue)) {
+        const cmValue = inchesToCm(inchesValue);
+        document.getElementById('wallHeightCm').value = cmValue.toFixed(1);
+    }
+}
+
+// Update wall height from cm input
+function updateWallHeightFromCm() {
+    const cmValue = parseFloat(document.getElementById('wallHeightCm').value);
+    if (!isNaN(cmValue)) {
+        const inchesValue = cmToInches(cmValue);
+        document.getElementById('wallHeightInches').value = inchesValue.toFixed(1);
+    }
 }
 
 // Handle wall background image upload
