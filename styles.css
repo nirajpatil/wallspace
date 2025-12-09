@@ -324,7 +324,6 @@ button:hover {
 }
 
 .wall-container {
-    border: 1px solid #ccc;
     margin: 20px 0;
     position: relative;
     overflow: hidden;
