@@ -11,7 +11,6 @@
  * - Interaction state: isDragging, isResizing, dragOffset, isPreviewMode
  * - Persistence: savedLayouts
  * - Units/scale: currentUnits, currentArtworkUnits, wallScale
- * - Wall appearance: wallBackgroundImage
  */
 
 // Artwork tracking
@@ -32,6 +31,3 @@ let savedLayouts = [];            // Array of saved layout configurations
 let currentUnits = 'inches';      // Current wall measurement units ('inches' or 'cm')
 let currentArtworkUnits = 'inches'; // Current artwork measurement units ('inches' or 'cm')
 let wallScale = 1;                // Pixels per inch for current wall display
-
-// Wall appearance
-let wallBackgroundImage = null;   // Data URL of uploaded wall background image

@@ -8,10 +8,12 @@
  * - Global mouse event handlers for drag/resize
  * - Click outside dialog handling
  * - Window resize handling
+ * - Left panel toggle functionality
  *
  * Key functions:
  * - positionDialog(artwork, dialog) - Position dialog next to selected artwork
  * - initUIEventHandlers() - Set up all global event listeners
+ * - toggleLeftPanel() - Toggle the visibility of the left control panel
  */
 
 // Position the artwork settings dialog next to the selected artwork
@@ -149,4 +151,13 @@ function initUIEventHandlers() {
     window.addEventListener('resize', function() {
         updateWall();
     });
+}
+
+// Toggle the visibility of the left control panel
+function toggleLeftPanel() {
+    const leftPanel = document.querySelector('.column-1');
+    const toggleButton = document.querySelector('.panel-toggle-icon');
+
+    leftPanel.classList.toggle('collapsed');
+    toggleButton.classList.toggle('panel-collapsed');
 }

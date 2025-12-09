@@ -70,8 +70,7 @@ function saveLayout() {
     const wallSettings = {
         width: document.getElementById('wallWidthInches').value,
         height: document.getElementById('wallHeightInches').value,
-        color: document.getElementById('wallColor').value,
-        backgroundImage: wallBackgroundImage
+        color: document.getElementById('wallColor').value
     };
 
     const artworks = [];
@@ -137,13 +136,6 @@ function loadLayout(index) {
     document.getElementById('wallHeightInches').value = heightInches;
     document.getElementById('wallHeightCm').value = inchesToCm(heightInches).toFixed(1);
     document.getElementById('wallColor').value = layout.wallSettings.color;
-
-    // Set wall background image if saved
-    if (layout.wallSettings.backgroundImage) {
-        wallBackgroundImage = layout.wallSettings.backgroundImage;
-    } else {
-        wallBackgroundImage = null;
-    }
 
     updateWall();
 
