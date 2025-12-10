@@ -135,7 +135,7 @@ input:focus, select:focus {
 .dimension-input input {
     border: none;
     background: transparent;
-    width: 114.5px;
+    width: 114px;
     height: 40px;
     padding: 0;
     font-size: 14px;
