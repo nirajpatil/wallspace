@@ -109,9 +109,11 @@ input:focus, select:focus {
     display: flex;
     align-items: center;
     gap: 8px;
+    width: 114.5px;
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 0 12px;
+    box-sizing: border-box;
 }
 
 .dimension-input:last-child {
@@ -135,7 +137,8 @@ input:focus, select:focus {
 .dimension-input input {
     border: none;
     background: transparent;
-    width: 114px;
+    flex: 1;
+    min-width: 0;
     height: 40px;
     padding: 0;
     font-size: 14px;
@@ -143,7 +146,6 @@ input:focus, select:focus {
     font-weight: 400;
     color: #333;
     text-align: left;
-    box-sizing: border-box;
     -moz-appearance: textfield;
 }
 
