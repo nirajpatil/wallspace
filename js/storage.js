@@ -147,7 +147,19 @@ function loadLayout(index) {
         wallBackgroundImage = null;
     }
 
+    // Update unit display for new UI
+    if (typeof updateUnitDisplay === 'function') {
+        updateUnitDisplay();
+    }
+
     updateWall();
+
+    // Sync the last applied values for refresh button state
+    if (typeof lastAppliedWidth !== 'undefined') {
+        lastAppliedWidth = parseFloat(layout.wallSettings.width);
+        lastAppliedHeight = parseFloat(layout.wallSettings.height);
+        lastAppliedUnits = layout.wallSettings.units || 'inches';
+    }
 
     // Clear existing artworks (without confirmation)
     clearArtworks();

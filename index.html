@@ -12,19 +12,38 @@
             <div class="control-panel">
                 <h3>Wallspace</h3>
                 <div class="form-group">
-                    <label for="wallUnits">Wall Units</label>
-                    <select id="wallUnits" onchange="updateWallUnits()">
+                    <label>Wall Size</label>
+                    <div class="wall-size-row">
+                        <div class="wall-size-inputs">
+                            <div class="dimension-input">
+                                <span class="dimension-label">W</span>
+                                <input type="number" id="wallWidth" value="80" min="24" max="300" oninput="onWallDimensionChange()">
+                            </div>
+                            <div class="dimension-divider"></div>
+                            <div class="dimension-input">
+                                <span class="dimension-label">H</span>
+                                <input type="number" id="wallHeight" value="80" min="24" max="200" oninput="onWallDimensionChange()">
+                            </div>
+                        </div>
+                        <div class="unit-switcher" id="unitSwitcher" onclick="cycleWallUnits()">
+                            <span id="wallUnitDisplay">IN</span>
+                        </div>
+                        <button class="refresh-wall-btn" id="refreshWallBtn" onclick="updateWall()" title="Update Wall">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M23 4V10H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M1 20V14H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3.51 9.00001C4.01717 7.56679 4.87913 6.28542 6.01547 5.27543C7.1518 4.26545 8.52547 3.55977 10.0083 3.22427C11.4911 2.88877 13.0348 2.93436 14.4952 3.35679C15.9556 3.77922 17.2853 4.56473 18.36 5.64001L23 10M1 14L5.64 18.36C6.71475 19.4353 8.04437 20.2208 9.50481 20.6432C10.9652 21.0657 12.5089 21.1112 13.9917 20.7757C15.4745 20.4402 16.8482 19.7346 17.9845 18.7246C19.1209 17.7146 19.9828 16.4332 20.49 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Hidden elements for compatibility -->
+                    <select id="wallUnits" style="display: none;">
                         <option value="inches">Inches</option>
                         <option value="cm">Centimeters</option>
+                        <option value="mm">Millimeters</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="wallWidth">Wall Width (<span id="wallWidthUnit">inches</span>)</label>
-                    <input type="number" id="wallWidth" value="120" min="24" max="300">
-                </div>
-                <div class="form-group">
-                    <label for="wallHeight">Wall Height (<span id="wallHeightUnit">inches</span>)</label>
-                    <input type="number" id="wallHeight" value="96" min="24" max="200">
+                    <span id="wallWidthUnit" style="display: none;">inches</span>
+                    <span id="wallHeightUnit" style="display: none;">inches</span>
                 </div>
                 <div class="form-group">
                     <label for="wallColor">Wall Color</label>
@@ -40,7 +59,6 @@
                         <input type="checkbox" id="showDistanceGuides" checked onchange="toggleDistanceGuides()"> Show Distance Guides
                     </label>
                 </div>
-                <button onclick="updateWall()">Update Wall</button>
             </div>
         </div>
 

@@ -29,7 +29,7 @@ let isPreviewMode = false;        // True when in room preview/zoom-out mode
 let savedLayouts = [];            // Array of saved layout configurations
 
 // Units and scale
-let currentUnits = 'inches';      // Current wall measurement units ('inches' or 'cm')
+let currentUnits = 'inches';      // Current wall measurement units ('inches', 'cm', or 'mm')
 let currentArtworkUnits = 'inches'; // Current artwork measurement units ('inches' or 'cm')
 let wallScale = 1;                // Pixels per inch for current wall display
 

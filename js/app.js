@@ -22,6 +22,14 @@ function initApp() {
     updateWallUnits();
     updateArtworkUnits();
 
+    // Initialize the new wall size UI elements
+    if (typeof updateUnitDisplay === 'function') {
+        updateUnitDisplay();
+    }
+    if (typeof updateRefreshButtonState === 'function') {
+        updateRefreshButtonState();
+    }
+
     // Load any saved layouts from localStorage
     loadSavedLayouts();
 

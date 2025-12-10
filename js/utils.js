@@ -24,20 +24,43 @@ function cmToInches(cm) {
     return cm / 2.54;
 }
 
-// Convert physical units (inches or cm) to screen pixels
+// Convert inches to millimeters
+function inchesToMm(inches) {
+    return inches * 25.4;
+}
+
+// Convert millimeters to inches
+function mmToInches(mm) {
+    return mm / 25.4;
+}
+
+// Convert physical units (inches, cm, or mm) to screen pixels
 // Uses wallScale from state.js (pixels per inch)
 function unitsToPixels(value, units) {
     // Convert to inches first if needed
-    const inches = units === 'cm' ? cmToInches(value) : value;
+    let inches;
+    if (units === 'cm') {
+        inches = cmToInches(value);
+    } else if (units === 'mm') {
+        inches = mmToInches(value);
+    } else {
+        inches = value;
+    }
     // Scale based on current wall scale (pixels per inch)
     return inches * wallScale;
 }
 
-// Convert screen pixels to physical units (inches or cm)
+// Convert screen pixels to physical units (inches, cm, or mm)
 // Uses wallScale from state.js (pixels per inch)
 function pixelsToUnits(pixels, units) {
     // Convert to inches first
     const inches = pixels / wallScale;
     // Convert to target units
-    return units === 'cm' ? inchesToCm(inches) : inches;
+    if (units === 'cm') {
+        return inchesToCm(inches);
+    } else if (units === 'mm') {
+        return inchesToMm(inches);
+    } else {
+        return inches;
+    }
 }
