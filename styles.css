@@ -95,7 +95,7 @@ input:focus, select:focus {
 .wall-size-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 5px;
 }
 
 .wall-size-inputs {
@@ -116,19 +116,29 @@ input:focus, select:focus {
 
 .dimension-label {
     color: #888;
-    font-size: 16px;
+    font-size: 12px;
+    line-height: 15px;
     font-weight: 500;
 }
 
 .dimension-input input {
     border: none;
     background: transparent;
-    width: 60px;
+    width: 114.5px;
+    height: 40px;
     padding: 8px 4px;
-    font-size: 24px;
+    font-size: 14px;
+    line-height: 20px;
     font-weight: 400;
     color: #333;
     text-align: left;
+    -moz-appearance: textfield;
+}
+
+.dimension-input input::-webkit-outer-spin-button,
+.dimension-input input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .dimension-input input:focus {
@@ -144,20 +154,25 @@ input:focus, select:focus {
 }
 
 .unit-switcher {
-    background: #f5f5f5;
+    background: transparent;
     border-radius: 8px;
-    padding: 12px 16px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: background 0.2s ease;
     user-select: none;
 }
 
 .unit-switcher:hover {
-    background: #e8e8e8;
+    background: #f0f0f0;
 }
 
 .unit-switcher span {
-    font-size: 16px;
+    font-size: 12px;
+    line-height: 15px;
     font-weight: 500;
     color: #666;
 }
@@ -166,8 +181,8 @@ input:focus, select:focus {
     background: transparent;
     border: none;
     border-radius: 50%;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
