@@ -195,7 +195,7 @@ function drawGuide(svg, x1, y1, x2, y2, distanceInches, distanceCm, orientation)
     const midY = (y1 + y2) / 2;
 
     // Format distance text (show both inches and cm)
-    const distanceText = `${distanceInches.toFixed(1)}" / ${distanceCm.toFixed(1)}cm`;
+    const distanceText = `${Math.round(distanceInches)}" / ${Math.round(distanceCm)}cm`;
 
     // Create text element
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
