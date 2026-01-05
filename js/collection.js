@@ -168,9 +168,9 @@ function createArtworkFromCollection(item, x, y) {
     artwork.className = 'artwork';
     artwork.id = 'artwork-' + (++artworkCounter);
 
-    // Default size: 6 inches
-    const defaultWidth = 6;
-    const defaultWidthPixels = unitsToPixels(defaultWidth, 'inches');
+    // Default size: 11 inches height with proportionate width
+    const defaultHeight = 11;
+    const defaultHeightPixels = unitsToPixels(defaultHeight, 'inches');
 
     // Create a temporary image to get natural dimensions
     const tempImg = new Image();
@@ -179,8 +179,8 @@ function createArtworkFromCollection(item, x, y) {
         artworkAspectRatios.set(artwork.id, aspectRatio);
 
         // Set size maintaining aspect ratio
-        const defaultHeight = defaultWidth / aspectRatio;
-        const defaultHeightPixels = unitsToPixels(defaultHeight, 'inches');
+        const defaultWidth = defaultHeight * aspectRatio;
+        const defaultWidthPixels = unitsToPixels(defaultWidth, 'inches');
 
         artwork.style.width = defaultWidthPixels + 'px';
         artwork.style.height = defaultHeightPixels + 'px';
@@ -211,10 +211,10 @@ function createArtworkFromCollection(item, x, y) {
     `;
 
     // Initial position (will be adjusted when image loads)
-    artwork.style.left = Math.max(0, x - defaultWidthPixels / 2) + 'px';
+    artwork.style.left = Math.max(0, x - defaultHeightPixels / 2) + 'px';
     artwork.style.top = y + 'px';
-    artwork.style.width = defaultWidthPixels + 'px';
-    artwork.style.height = defaultWidthPixels + 'px';
+    artwork.style.width = defaultHeightPixels + 'px'; // Placeholder, will be updated
+    artwork.style.height = defaultHeightPixels + 'px';
 
     wallContainer.appendChild(artwork);
     setupArtworkEvents(artwork);
