@@ -27,6 +27,9 @@ function initApp() {
 
     // Set up all UI event handlers
     initUIEventHandlers();
+
+    // Initialize collapsible sections
+    initCollapsibleSections();
 }
 
 // Run initialization when DOM is ready
