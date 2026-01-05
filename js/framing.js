@@ -16,13 +16,13 @@
 function updateSelectedArtwork() {
     if (!selectedArtwork) return;
 
-    const hasFrame = document.getElementById('hasFrame').checked;
-    const hasMatte = document.getElementById('hasMatte').checked;
-    const frameColor = document.getElementById('frameColor').value;
-    const frameSize = parseFloat(document.getElementById('frameSize').value);
-    const matteColor = document.getElementById('matteColor').value;
-    const matteSize = parseFloat(document.getElementById('matteSize').value);
-    const units = document.getElementById('artworkUnits').value;
+    const hasFrame = document.getElementById('sidebarHasFrame').checked;
+    const hasMatte = document.getElementById('sidebarHasMatte').checked;
+    const frameColor = document.getElementById('sidebarFrameColor').value;
+    const frameSize = parseFloat(document.getElementById('sidebarFrameSize').value);
+    const matteColor = document.getElementById('sidebarMatteColor').value;
+    const matteSize = parseFloat(document.getElementById('sidebarMatteSize').value);
+    const units = document.getElementById('sidebarArtworkUnits').value;
 
     const frame = selectedArtwork.querySelector('.frame');
     const matte = selectedArtwork.querySelector('.matte');
@@ -30,8 +30,8 @@ function updateSelectedArtwork() {
     const imageContainer = selectedArtwork.querySelector('.image-container');
 
     // Get the artwork's current dimensions (this is the image size)
-    const artworkWidth = parseFloat(document.getElementById('artworkWidth').value);
-    const artworkHeight = parseFloat(document.getElementById('artworkHeight').value);
+    const artworkWidth = parseFloat(document.getElementById('sidebarArtworkWidth').value);
+    const artworkHeight = parseFloat(document.getElementById('sidebarArtworkHeight').value);
     const artworkWidthPixels = unitsToPixels(artworkWidth, units);
     const artworkHeightPixels = unitsToPixels(artworkHeight, units);
 
