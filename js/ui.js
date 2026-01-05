@@ -5,14 +5,46 @@
  *
  * This file handles all UI interactions:
  * - Dialog positioning and management
+ * - Collapsible section toggles
  * - Global mouse event handlers for drag/resize
  * - Click outside dialog handling
  * - Window resize handling
  *
  * Key functions:
+ * - toggleSection(sectionId) - Toggle collapsible section visibility
  * - positionDialog(artwork, dialog) - Position dialog next to selected artwork
  * - initUIEventHandlers() - Set up all global event listeners
  */
+
+// Toggle collapsible section visibility
+function toggleSection(sectionId) {
+    const content = document.getElementById(sectionId + 'Content');
+    const chevron = document.getElementById(sectionId + 'Chevron');
+
+    if (content && chevron) {
+        content.classList.toggle('open');
+        chevron.classList.toggle('open');
+    }
+}
+
+// Initialize sections to be open by default
+function initCollapsibleSections() {
+    // Open wall settings by default
+    const wallContent = document.getElementById('wallSettingsContent');
+    const wallChevron = document.getElementById('wallSettingsChevron');
+    if (wallContent && wallChevron) {
+        wallContent.classList.add('open');
+        wallChevron.classList.add('open');
+    }
+
+    // Open artwork settings by default
+    const artworkContent = document.getElementById('artworkSettingsContent');
+    const artworkChevron = document.getElementById('artworkSettingsChevron');
+    if (artworkContent && artworkChevron) {
+        artworkContent.classList.add('open');
+        artworkChevron.classList.add('open');
+    }
+}
 
 // Position the artwork settings dialog next to the selected artwork
 // NOTE: This function is disabled - artwork settings now appear in the sidebar

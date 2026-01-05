@@ -60,12 +60,39 @@ body {
     border-top: 1px solid #e0e0e0;
 }
 
-.artwork-panel h3 {
-    color: #2c3e50;
+/* Collapsible Section Styles */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
     margin-bottom: 15px;
-    font-size: 24px;
+}
+
+.section-header span {
+    color: #2c3e50;
+    font-size: 16px;
     font-family: 'Basalte-Fond', sans-serif;
     font-weight: bold;
+}
+
+.section-chevron {
+    color: #555;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.section-chevron.open {
+    transform: rotate(90deg);
+}
+
+.section-content {
+    display: none;
+}
+
+.section-content.open {
+    display: block;
 }
 
 .control-panel h3 {

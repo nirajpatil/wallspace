@@ -11,6 +11,13 @@
         <div class="column-1">
             <div class="control-panel">
                 <h3>Wallspace</h3>
+                <div class="section-header" onclick="toggleSection('wallSettings')">
+                    <svg class="section-chevron" id="wallSettingsChevron" width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 1L6 4L2 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Wall settings</span>
+                </div>
+                <div class="section-content" id="wallSettingsContent">
                 <div class="form-group">
                     <label for="wallUnits">Wall Units</label>
                     <select id="wallUnits" onchange="updateWallUnits()">
@@ -41,11 +48,18 @@
                     </label>
                 </div>
                 <button onclick="updateWall()">Update Wall</button>
+                </div>
             </div>
 
             <!-- Artwork Settings Panel - shown when artwork is selected -->
             <div class="artwork-panel" id="artworkPanel" style="display: none;">
-                <h3>Artwork settings</h3>
+                <div class="section-header" onclick="toggleSection('artworkSettings')">
+                    <svg class="section-chevron" id="artworkSettingsChevron" width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 1L6 4L2 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Artwork settings</span>
+                </div>
+                <div class="section-content" id="artworkSettingsContent">
                 <div class="form-group">
                     <label for="sidebarArtworkUnits">Artwork Units</label>
                     <select id="sidebarArtworkUnits" onchange="updateArtworkUnits()">
@@ -106,6 +120,7 @@
                     <input type="number" id="sidebarMatteSize" step="0.1" min="0.1" max="5" value="1" onchange="updateSelectedArtwork()">
                 </div>
                 <button onclick="deleteSelected()">Remove Artwork</button>
+                </div>
             </div>
         </div>
 
