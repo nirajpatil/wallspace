@@ -30,6 +30,9 @@ function initApp() {
 
     // Initialize collapsible sections
     initCollapsibleSections();
+
+    // Initialize collection module
+    initCollection();
 }
 
 // Run initialization when DOM is ready

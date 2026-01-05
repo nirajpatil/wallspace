@@ -122,6 +122,25 @@
                 <button onclick="deleteSelected()">Remove Artwork</button>
                 </div>
             </div>
+
+            <!-- Collection Panel -->
+            <div class="collection-panel" id="collectionPanel">
+                <div class="section-header" onclick="toggleSection('collectionSettings')">
+                    <svg class="section-chevron" id="collectionSettingsChevron" width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 1L6 4L2 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Collection</span>
+                </div>
+                <div class="section-content open" id="collectionSettingsContent">
+                    <div class="form-group">
+                        <label for="collectionFileInput">Add to collection</label>
+                        <input type="file" id="collectionFileInput" accept="image/*" multiple>
+                    </div>
+                    <div class="collection-list" id="collectionList">
+                        <!-- Collection items rendered here by JavaScript -->
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="column-3">
@@ -257,6 +276,7 @@
     <!-- Phase 3: Artwork modules -->
     <script src="js/framing.js"></script>
     <script src="js/artwork.js"></script>
+    <script src="js/collection.js"></script>
     <!-- Phase 4: Visual features -->
     <script src="js/distance-guides.js"></script>
     <script src="js/room-view.js"></script>

@@ -35,3 +35,7 @@ let wallScale = 1;                // Pixels per inch for current wall display
 
 // Wall appearance
 let wallBackgroundImage = null;   // Data URL of uploaded wall background image
+
+// Collection
+let collectionItems = [];         // Array of {id, src, name, dateAdded}
+let collectionCounter = 0;        // Counter for generating unique collection IDs
