@@ -22,27 +22,27 @@
 
 // Handle artwork unit conversion (inches <-> cm)
 function updateArtworkUnits() {
-    const newUnits = document.getElementById('artworkUnits').value;
-    const artworkWidth = parseFloat(document.getElementById('artworkWidth').value);
-    const artworkHeight = parseFloat(document.getElementById('artworkHeight').value);
+    const newUnits = document.getElementById('sidebarArtworkUnits').value;
+    const artworkWidth = parseFloat(document.getElementById('sidebarArtworkWidth').value);
+    const artworkHeight = parseFloat(document.getElementById('sidebarArtworkHeight').value);
 
     if (currentArtworkUnits !== newUnits && !isNaN(artworkWidth) && !isNaN(artworkHeight)) {
         // Convert existing values
         if (newUnits === 'cm') {
-            document.getElementById('artworkWidth').value = inchesToCm(artworkWidth).toFixed(1);
-            document.getElementById('artworkHeight').value = inchesToCm(artworkHeight).toFixed(1);
+            document.getElementById('sidebarArtworkWidth').value = inchesToCm(artworkWidth).toFixed(1);
+            document.getElementById('sidebarArtworkHeight').value = inchesToCm(artworkHeight).toFixed(1);
         } else {
-            document.getElementById('artworkWidth').value = cmToInches(artworkWidth).toFixed(1);
-            document.getElementById('artworkHeight').value = cmToInches(artworkHeight).toFixed(1);
+            document.getElementById('sidebarArtworkWidth').value = cmToInches(artworkWidth).toFixed(1);
+            document.getElementById('sidebarArtworkHeight').value = cmToInches(artworkHeight).toFixed(1);
         }
         currentArtworkUnits = newUnits;
     }
 
     // Update unit labels for artwork
-    document.getElementById('artworkWidthUnit').textContent = newUnits;
-    document.getElementById('artworkHeightUnit').textContent = newUnits;
-    document.getElementById('frameUnit').textContent = newUnits;
-    document.getElementById('matteUnit').textContent = newUnits;
+    document.getElementById('sidebarArtworkWidthUnit').textContent = newUnits;
+    document.getElementById('sidebarArtworkHeightUnit').textContent = newUnits;
+    document.getElementById('sidebarFrameUnit').textContent = newUnits;
+    document.getElementById('sidebarMatteUnit').textContent = newUnits;
 
     // Update artwork if one is selected
     if (selectedArtwork) {
@@ -193,7 +193,7 @@ function setupArtworkEvents(artwork) {
     });
 }
 
-// Select artwork and show settings dialog
+// Select artwork and show settings in sidebar
 function selectArtwork(artwork) {
     // Remove selection from all artworks
     document.querySelectorAll('.artwork').forEach(art => {
@@ -204,12 +204,9 @@ function selectArtwork(artwork) {
     artwork.classList.add('selected');
     selectedArtwork = artwork;
 
-    // Show dialog
-    const dialog = document.getElementById('artworkDialog');
-    dialog.classList.add('active');
-
-    // Position dialog next to artwork
-    positionDialog(artwork, dialog);
+    // Show sidebar artwork panel
+    const artworkPanel = document.getElementById('artworkPanel');
+    artworkPanel.style.display = 'block';
 
     // Update control values based on current artwork
     updateControlsFromArtwork(artwork);
@@ -218,17 +215,17 @@ function selectArtwork(artwork) {
     updateDistanceGuides();
 }
 
-// Sync dialog controls with current artwork state
+// Sync sidebar controls with current artwork state
 function updateControlsFromArtwork(artwork) {
     const frame = artwork.querySelector('.frame');
     const matte = artwork.querySelector('.matte');
 
-    document.getElementById('hasMatte').checked = matte.style.display !== 'none' && matte.style.backgroundColor !== 'transparent';
-    document.getElementById('hasFrame').checked = frame.style.display !== 'none' && frame.style.backgroundColor !== 'transparent';
+    document.getElementById('sidebarHasMatte').checked = matte.style.display !== 'none' && matte.style.backgroundColor !== 'transparent';
+    document.getElementById('sidebarHasFrame').checked = frame.style.display !== 'none' && frame.style.backgroundColor !== 'transparent';
 
     // For artwork with frames/mattes, we need to calculate the actual image size
     // by subtracting the frame and matte dimensions
-    const units = document.getElementById('artworkUnits').value;
+    const units = document.getElementById('sidebarArtworkUnits').value;
     let totalWidth = artwork.offsetWidth;
     let totalHeight = artwork.offsetHeight;
 
@@ -237,14 +234,14 @@ function updateControlsFromArtwork(artwork) {
     if (imageContainer && imageContainer.style.width) {
         const widthInUnits = pixelsToUnits(parseFloat(imageContainer.style.width), units);
         const heightInUnits = pixelsToUnits(parseFloat(imageContainer.style.height), units);
-        document.getElementById('artworkWidth').value = widthInUnits.toFixed(1);
-        document.getElementById('artworkHeight').value = heightInUnits.toFixed(1);
+        document.getElementById('sidebarArtworkWidth').value = widthInUnits.toFixed(1);
+        document.getElementById('sidebarArtworkHeight').value = heightInUnits.toFixed(1);
     } else {
         // No framing, use total dimensions
         const widthInUnits = pixelsToUnits(totalWidth, units);
         const heightInUnits = pixelsToUnits(totalHeight, units);
-        document.getElementById('artworkWidth').value = widthInUnits.toFixed(1);
-        document.getElementById('artworkHeight').value = heightInUnits.toFixed(1);
+        document.getElementById('sidebarArtworkWidth').value = widthInUnits.toFixed(1);
+        document.getElementById('sidebarArtworkHeight').value = heightInUnits.toFixed(1);
     }
 }
 
@@ -252,10 +249,10 @@ function updateControlsFromArtwork(artwork) {
 function updateArtworkSize() {
     if (!selectedArtwork) return;
 
-    const maintainRatio = document.getElementById('maintainRatio').checked;
-    const units = document.getElementById('artworkUnits').value;
-    const width = parseFloat(document.getElementById('artworkWidth').value);
-    const height = parseFloat(document.getElementById('artworkHeight').value);
+    const maintainRatio = document.getElementById('sidebarMaintainRatio').checked;
+    const units = document.getElementById('sidebarArtworkUnits').value;
+    const width = parseFloat(document.getElementById('sidebarArtworkWidth').value);
+    const height = parseFloat(document.getElementById('sidebarArtworkHeight').value);
 
     if (maintainRatio && artworkAspectRatios.has(selectedArtwork.id)) {
         const aspectRatio = artworkAspectRatios.get(selectedArtwork.id);
@@ -264,7 +261,7 @@ function updateArtworkSize() {
         if (Math.abs(height - expectedHeight) > 0.1) {
             // Height was changed, adjust width
             const newWidth = height * aspectRatio;
-            document.getElementById('artworkWidth').value = newWidth.toFixed(1);
+            document.getElementById('sidebarArtworkWidth').value = newWidth.toFixed(1);
         }
     }
 
@@ -278,7 +275,8 @@ function deleteSelected() {
     if (selectedArtwork) {
         selectedArtwork.remove();
         selectedArtwork = null;
-        document.getElementById('artworkDialog').classList.remove('active');
+        // Hide sidebar artwork panel
+        document.getElementById('artworkPanel').style.display = 'none';
 
         // Clear distance guides when artwork is deleted
         updateDistanceGuides();

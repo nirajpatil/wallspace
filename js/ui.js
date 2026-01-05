@@ -15,36 +15,11 @@
  */
 
 // Position the artwork settings dialog next to the selected artwork
+// NOTE: This function is disabled - artwork settings now appear in the sidebar
 function positionDialog(artwork, dialog) {
-    const artworkRect = artwork.getBoundingClientRect();
-    const dialogWidth = 320;
-    const dialogPadding = 20;
-
-    // Try to position to the right of the artwork
-    let left = artworkRect.right + dialogPadding;
-    let top = artworkRect.top;
-
-    // Check if dialog would go off screen on the right
-    if (left + dialogWidth > window.innerWidth) {
-        // Position to the left of the artwork
-        left = artworkRect.left - dialogWidth - dialogPadding;
-    }
-
-    // If still off screen, position to the left of the artwork within the wall container
-    if (left < 0) {
-        left = artworkRect.left - dialogWidth - dialogPadding;
-        if (left < 0) {
-            // Just position at a fixed offset if no room
-            left = artworkRect.right + 10;
-        }
-    }
-
-    // Keep within vertical bounds
-    const maxTop = window.innerHeight - dialog.offsetHeight - 20;
-    top = Math.max(20, Math.min(top, maxTop));
-
-    dialog.style.left = left + 'px';
-    dialog.style.top = top + 'px';
+    // Disabled: Dialog functionality moved to sidebar
+    // Keeping function for potential future use
+    return;
 }
 
 // Initialize all UI event handlers
@@ -72,12 +47,6 @@ function initUIEventHandlers() {
             selectedArtwork.style.left = newX + 'px';
             selectedArtwork.style.top = newY + 'px';
 
-            // Reposition dialog while dragging
-            const dialog = document.getElementById('artworkDialog');
-            if (dialog.classList.contains('active')) {
-                positionDialog(selectedArtwork, dialog);
-            }
-
             // Update distance guides while dragging
             updateDistanceGuides();
         } else if (isResizing && selectedArtwork) {
@@ -103,12 +72,6 @@ function initUIEventHandlers() {
             selectedArtwork.style.width = newWidth + 'px';
             selectedArtwork.style.height = newHeight + 'px';
 
-            // Reposition dialog while resizing
-            const dialog = document.getElementById('artworkDialog');
-            if (dialog.classList.contains('active')) {
-                positionDialog(selectedArtwork, dialog);
-            }
-
             // Update distance guides while resizing
             updateDistanceGuides();
         }
@@ -122,22 +85,23 @@ function initUIEventHandlers() {
         }
     });
 
-    // Close dialog when clicking outside
+    // Deselect artwork when clicking outside (on the wall or workspace)
     document.addEventListener('click', function(e) {
         // Don't process clicks in preview mode
         if (isPreviewMode) return;
 
-        const dialog = document.getElementById('artworkDialog');
+        const artworkPanel = document.getElementById('artworkPanel');
         const artwork = selectedArtwork;
+        const wallContainer = document.getElementById('wallContainer');
 
-        // Check if click is outside dialog and artwork
-        if (dialog.classList.contains('active') &&
-            !dialog.contains(e.target) &&
-            (!artwork || !artwork.contains(e.target))) {
-            dialog.classList.remove('active');
-            if (artwork) {
-                artwork.classList.remove('selected');
-            }
+        // Check if click is on the wall container but not on any artwork or sidebar
+        if (artwork &&
+            wallContainer.contains(e.target) &&
+            !e.target.closest('.artwork') &&
+            !artworkPanel.contains(e.target)) {
+            // Hide sidebar artwork panel
+            artworkPanel.style.display = 'none';
+            artwork.classList.remove('selected');
             selectedArtwork = null;
 
             // Clear distance guides when deselecting

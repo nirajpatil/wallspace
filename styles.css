@@ -51,6 +51,23 @@ body {
     margin-bottom: 20px;
 }
 
+/* Artwork Settings Panel in Sidebar */
+.artwork-panel {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.artwork-panel h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-family: 'Basalte-Fond', sans-serif;
+    font-weight: bold;
+}
+
 .control-panel h3 {
     color: #2c3e50;
     margin-bottom: 15px;
