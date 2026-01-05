@@ -33,6 +33,9 @@ function updateWall() {
     const maxWidth = workspace.offsetWidth - 40; // Account for padding
     const maxHeight = window.innerHeight - 60; // Use browser window height minus padding for controls
 
+    // Store old wallScale before changing it
+    const oldWallScale = wallScale;
+
     // Calculate scale to fit within available space
     wallScale = Math.min(maxWidth / widthInches, maxHeight / heightInches);
     const displayWidth = widthInches * wallScale;
@@ -50,6 +53,12 @@ function updateWall() {
         wallContainer.style.backgroundRepeat = 'no-repeat';
     } else {
         wallContainer.style.backgroundImage = 'none';
+    }
+
+    // If wallScale changed, update selected artwork controls to reflect new physical dimensions
+    // but keep pixel dimensions the same
+    if (oldWallScale !== wallScale && selectedArtwork) {
+        updateControlsFromArtwork(selectedArtwork);
     }
 }
 
