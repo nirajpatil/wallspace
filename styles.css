@@ -60,6 +60,84 @@ body {
     border-top: 1px solid #e0e0e0;
 }
 
+/* Collection Panel in Sidebar */
+.collection-panel {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Collection List */
+.collection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Collection Item (thumbnail + name) */
+.collection-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    cursor: grab;
+}
+
+.collection-item:hover {
+    background: #e8e8e8;
+}
+
+.collection-item.dragging {
+    opacity: 0.5;
+}
+
+.collection-item-thumbnail {
+    height: 32px;
+    width: auto;
+    max-width: 48px;
+    object-fit: contain;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.collection-item-name {
+    flex: 1;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #333;
+}
+
+.collection-item-delete {
+    opacity: 0;
+    cursor: pointer;
+    color: #e74c3c;
+    font-size: 14px;
+    padding: 4px;
+    transition: opacity 0.2s ease;
+}
+
+.collection-item:hover .collection-item-delete {
+    opacity: 1;
+}
+
+.collection-item-delete:hover {
+    color: #c0392b;
+}
+
+/* Drop zone visual feedback */
+.wall-container.drag-over {
+    outline: 3px dashed #667eea;
+    outline-offset: -3px;
+}
+
 /* Collapsible Section Styles */
 .section-header {
     display: flex;
