@@ -55,10 +55,67 @@ function updateWall() {
         wallContainer.style.backgroundImage = 'none';
     }
 
+<<<<<<< HEAD
     // If wallScale changed, update selected artwork controls to reflect new physical dimensions
     // but keep pixel dimensions the same
     if (oldWallScale !== wallScale && selectedArtwork) {
         updateControlsFromArtwork(selectedArtwork);
+=======
+    // If wallScale changed, rescale all artworks to maintain their physical dimensions
+    if (oldWallScale !== wallScale && oldWallScale !== 1) {
+        const scaleRatio = wallScale / oldWallScale;
+        const artworks = document.querySelectorAll('.artwork');
+
+        artworks.forEach(artwork => {
+            // Scale the artwork dimensions
+            const currentWidth = parseFloat(artwork.style.width);
+            const currentHeight = parseFloat(artwork.style.height);
+
+            artwork.style.width = (currentWidth * scaleRatio) + 'px';
+            artwork.style.height = (currentHeight * scaleRatio) + 'px';
+
+            // Scale the position
+            const currentLeft = parseFloat(artwork.style.left);
+            const currentTop = parseFloat(artwork.style.top);
+
+            artwork.style.left = (currentLeft * scaleRatio) + 'px';
+            artwork.style.top = (currentTop * scaleRatio) + 'px';
+
+            // If this artwork has frame/matte, we need to update the image container size too
+            const imageContainer = artwork.querySelector('.image-container');
+            if (imageContainer && imageContainer.style.width) {
+                const containerWidth = parseFloat(imageContainer.style.width);
+                const containerHeight = parseFloat(imageContainer.style.height);
+
+                imageContainer.style.width = (containerWidth * scaleRatio) + 'px';
+                imageContainer.style.height = (containerHeight * scaleRatio) + 'px';
+            }
+
+            // Update frame padding if it exists
+            const frame = artwork.querySelector('.frame');
+            if (frame && frame.style.padding && frame.style.padding !== '0' && frame.style.padding !== '0px') {
+                const currentPadding = parseFloat(frame.style.padding);
+                frame.style.padding = (currentPadding * scaleRatio) + 'px';
+            }
+
+            // Update matte padding if it exists
+            const matte = artwork.querySelector('.matte');
+            if (matte && matte.style.padding && matte.style.padding !== '0' && matte.style.padding !== '0px') {
+                const currentPadding = parseFloat(matte.style.padding);
+                matte.style.padding = (currentPadding * scaleRatio) + 'px';
+            }
+        });
+
+        // Update selected artwork controls to show the same physical dimensions
+        if (selectedArtwork) {
+            updateControlsFromArtwork(selectedArtwork);
+        }
+
+        // Update distance guides since positions changed
+        if (typeof updateDistanceGuides === 'function') {
+            updateDistanceGuides();
+        }
+>>>>>>> baf4306786a7fb699b38d9b8b805db6ecbd64da1
     }
 }
 
