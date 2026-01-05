@@ -55,12 +55,6 @@ function updateWall() {
         wallContainer.style.backgroundImage = 'none';
     }
 
-<<<<<<< HEAD
-    // If wallScale changed, update selected artwork controls to reflect new physical dimensions
-    // but keep pixel dimensions the same
-    if (oldWallScale !== wallScale && selectedArtwork) {
-        updateControlsFromArtwork(selectedArtwork);
-=======
     // If wallScale changed, rescale all artworks to maintain their physical dimensions
     if (oldWallScale !== wallScale && oldWallScale !== 1) {
         const scaleRatio = wallScale / oldWallScale;
@@ -115,7 +109,6 @@ function updateWall() {
         if (typeof updateDistanceGuides === 'function') {
             updateDistanceGuides();
         }
->>>>>>> baf4306786a7fb699b38d9b8b805db6ecbd64da1
     }
 }
 
