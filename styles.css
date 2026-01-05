@@ -458,11 +458,11 @@ button:hover {
 }
 
 .artwork:hover {
-    border-color: #667eea;
+    border-color: #000000;
 }
 
 .artwork.selected {
-    box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+    border-color: #000000;
 }
 
 /* Disable artwork interactions in preview mode */
@@ -482,7 +482,7 @@ button:hover {
 .artwork img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: fill;
     display: block;
 }
 
@@ -524,6 +524,7 @@ button:hover {
     background: #667eea;
     cursor: se-resize;
     border-radius: 50%;
+    display: none; /* Disabled for now */
 }
 
 /* Distance Guides SVG */

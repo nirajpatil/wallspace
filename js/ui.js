@@ -82,30 +82,31 @@ function initUIEventHandlers() {
             // Update distance guides while dragging
             updateDistanceGuides();
         } else if (isResizing && selectedArtwork) {
-            const wallContainer = document.getElementById('wallContainer');
-            const wallRect = wallContainer.getBoundingClientRect();
-            const artworkRect = selectedArtwork.getBoundingClientRect();
+            // Resize functionality disabled - use sidebar dimension inputs instead
+            // const wallContainer = document.getElementById('wallContainer');
+            // const wallRect = wallContainer.getBoundingClientRect();
+            // const artworkRect = selectedArtwork.getBoundingClientRect();
 
-            let newWidth = e.clientX - artworkRect.left;
-            let newHeight = e.clientY - artworkRect.top;
+            // let newWidth = e.clientX - artworkRect.left;
+            // let newHeight = e.clientY - artworkRect.top;
 
-            // Maintain aspect ratio
-            const aspectRatio = selectedArtwork.offsetWidth / selectedArtwork.offsetHeight;
-            if (newWidth / newHeight > aspectRatio) {
-                newWidth = newHeight * aspectRatio;
-            } else {
-                newHeight = newWidth / aspectRatio;
-            }
+            // // Maintain aspect ratio
+            // const aspectRatio = selectedArtwork.offsetWidth / selectedArtwork.offsetHeight;
+            // if (newWidth / newHeight > aspectRatio) {
+            //     newWidth = newHeight * aspectRatio;
+            // } else {
+            //     newHeight = newWidth / aspectRatio;
+            // }
 
-            // Minimum size
-            newWidth = Math.max(50, newWidth);
-            newHeight = Math.max(50, newHeight);
+            // // Minimum size
+            // newWidth = Math.max(50, newWidth);
+            // newHeight = Math.max(50, newHeight);
 
-            selectedArtwork.style.width = newWidth + 'px';
-            selectedArtwork.style.height = newHeight + 'px';
+            // selectedArtwork.style.width = newWidth + 'px';
+            // selectedArtwork.style.height = newHeight + 'px';
 
-            // Update distance guides while resizing
-            updateDistanceGuides();
+            // // Update distance guides while resizing
+            // updateDistanceGuides();
         }
     });
 

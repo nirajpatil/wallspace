@@ -91,9 +91,10 @@ function handleImageUpload(event) {
                 const aspectRatio = tempImg.naturalWidth / tempImg.naturalHeight;
                 artworkAspectRatios.set(artwork.id, aspectRatio);
 
-                // Set size maintaining aspect ratio
-                const defaultHeight = imageWidth / aspectRatio;
-                const defaultWidthPixels = unitsToPixels(imageWidth, 'inches');
+                // Set size maintaining aspect ratio - baseline height of 11 inches
+                const defaultHeight = 11; // inches
+                const defaultWidth = defaultHeight * aspectRatio;
+                const defaultWidthPixels = unitsToPixels(defaultWidth, 'inches');
                 const defaultHeightPixels = unitsToPixels(defaultHeight, 'inches');
 
                 artwork.style.width = defaultWidthPixels + 'px';
@@ -115,9 +116,10 @@ function handleImageUpload(event) {
 
             artwork.style.left = xPixels + 'px';
             artwork.style.top = yPixels + 'px';
-            const defaultSizePixels = unitsToPixels(imageWidth, 'inches');
-            artwork.style.width = defaultSizePixels + 'px';
-            artwork.style.height = defaultSizePixels + 'px';
+            // Initial size will be set by tempImg.onload based on actual aspect ratio
+            const defaultHeightPixels = unitsToPixels(11, 'inches');
+            artwork.style.width = defaultHeightPixels + 'px'; // Placeholder, will be updated
+            artwork.style.height = defaultHeightPixels + 'px';
 
             wallContainer.appendChild(artwork);
             setupArtworkEvents(artwork);
@@ -139,9 +141,9 @@ function addToWall(imageSrc) {
         const aspectRatio = tempImg.naturalWidth / tempImg.naturalHeight;
         artworkAspectRatios.set(artwork.id, aspectRatio);
 
-        // Set default size maintaining aspect ratio
-        const defaultWidth = 6; // inches
-        const defaultHeight = defaultWidth / aspectRatio;
+        // Set default size maintaining aspect ratio - baseline height of 11 inches
+        const defaultHeight = 11; // inches
+        const defaultWidth = defaultHeight * aspectRatio;
         const defaultWidthPixels = unitsToPixels(defaultWidth, 'inches');
         const defaultHeightPixels = unitsToPixels(defaultHeight, 'inches');
 
@@ -164,10 +166,10 @@ function addToWall(imageSrc) {
 
     artwork.style.left = '20px';
     artwork.style.top = '20px';
-    // Default size: 6 inches square (will be adjusted by image load)
-    const defaultSizePixels = unitsToPixels(6, 'inches');
-    artwork.style.width = defaultSizePixels + 'px';
-    artwork.style.height = defaultSizePixels + 'px';
+    // Initial size will be set by tempImg.onload based on actual aspect ratio
+    const defaultHeightPixels = unitsToPixels(11, 'inches');
+    artwork.style.width = defaultHeightPixels + 'px'; // Placeholder, will be updated
+    artwork.style.height = defaultHeightPixels + 'px';
 
     wallContainer.appendChild(artwork);
     setupArtworkEvents(artwork);
@@ -180,7 +182,9 @@ function setupArtworkEvents(artwork) {
         if (isPreviewMode) return;
 
         if (e.target.classList.contains('resize-handle')) {
-            isResizing = true;
+            // Resize functionality disabled - use sidebar dimension inputs instead
+            // isResizing = true;
+            return;
         } else {
             isDragging = true;
             const rect = artwork.getBoundingClientRect();
