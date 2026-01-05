@@ -112,11 +112,12 @@ function loadCollection() {
             const data = JSON.parse(saved);
             collectionItems = data.items || [];
             collectionCounter = data.counter || 0;
-            renderCollectionList();
         }
     } catch (e) {
         console.warn('Failed to load collection from localStorage:', e);
     }
+    // Always render the list (shows empty state if no items)
+    renderCollectionList();
 }
 
 // Initialize drop zone on wall container
