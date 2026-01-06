@@ -6,13 +6,10 @@
  * This file handles all wall-related functionality including:
  * - Wall dimension updates and scaling
  * - Wall unit conversions (inches/cm)
- * - Wall background image management
  *
  * Key functions:
  * - updateWall() - Recalculate and apply wall dimensions and appearance
  * - updateWallUnits() - Handle unit conversion for wall measurements
- * - handleWallImageUpload(event) - Process uploaded background image
- * - removeWallImage() - Clear the wall background image
  */
 
 // Update wall display based on current settings
@@ -44,16 +41,6 @@ function updateWall() {
     wallContainer.style.width = displayWidth + 'px';
     wallContainer.style.height = displayHeight + 'px';
     wallContainer.style.backgroundColor = color;
-
-    // Set background image if available
-    if (wallBackgroundImage) {
-        wallContainer.style.backgroundImage = `url(${wallBackgroundImage})`;
-        wallContainer.style.backgroundSize = 'cover';
-        wallContainer.style.backgroundPosition = 'center';
-        wallContainer.style.backgroundRepeat = 'no-repeat';
-    } else {
-        wallContainer.style.backgroundImage = 'none';
-    }
 
     // If wallScale changed, rescale all artworks to maintain their physical dimensions
     if (oldWallScale !== wallScale && oldWallScale !== 1) {
@@ -133,24 +120,4 @@ function updateWallUnits() {
     // Update unit labels
     document.getElementById('wallWidthUnit').textContent = newUnits;
     document.getElementById('wallHeightUnit').textContent = newUnits;
-}
-
-// Handle wall background image upload
-function handleWallImageUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            wallBackgroundImage = e.target.result;
-            updateWall();
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-// Remove wall background image
-function removeWallImage() {
-    wallBackgroundImage = null;
-    document.getElementById('wallImageUpload').value = '';
-    updateWall();
 }

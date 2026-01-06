@@ -71,8 +71,7 @@ function saveLayout() {
         width: document.getElementById('wallWidth').value,
         height: document.getElementById('wallHeight').value,
         color: document.getElementById('wallColor').value,
-        units: document.getElementById('wallUnits').value,
-        backgroundImage: wallBackgroundImage
+        units: document.getElementById('wallUnits').value
     };
 
     const artworks = [];
@@ -138,13 +137,6 @@ function loadLayout(index) {
     if (layout.wallSettings.units) {
         document.getElementById('wallUnits').value = layout.wallSettings.units;
         updateWallUnits();
-    }
-
-    // Set wall background image if saved
-    if (layout.wallSettings.backgroundImage) {
-        wallBackgroundImage = layout.wallSettings.backgroundImage;
-    } else {
-        wallBackgroundImage = null;
     }
 
     updateWall();
