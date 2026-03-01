@@ -1,3 +1,27 @@
+/* Custom drag cursor */
+#custom-drag-cursor {
+    display: none;
+    pointer-events: none;
+    z-index: 99999;
+}
+
+#custom-drag-cursor.active {
+    display: block;
+    position: fixed;
+    transform: translate(0, 0);
+}
+
+#custom-drag-cursor img {
+    display: block;
+    width: 64px;
+    height: 64px;
+}
+
+body.dragging-artwork,
+body.dragging-artwork *:not(#custom-drag-cursor):not(#custom-drag-cursor img) {
+    cursor: none !important;
+}
+
 /* Custom Font */
 @font-face {
     font-family: 'Basalte-Fond';

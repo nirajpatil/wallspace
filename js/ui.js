@@ -66,6 +66,11 @@ function initUIEventHandlers() {
         }
 
         if (isDragging && selectedArtwork) {
+            // Move custom animated cursor with the mouse
+            const cursor = document.getElementById('custom-drag-cursor');
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+
             const wallContainer = document.getElementById('wallContainer');
             const wallRect = wallContainer.getBoundingClientRect();
 
@@ -115,6 +120,11 @@ function initUIEventHandlers() {
         if (!isPreviewMode) {
             isDragging = false;
             isResizing = false;
+
+            // Hide custom animated cursor
+            const cursor = document.getElementById('custom-drag-cursor');
+            cursor.classList.remove('active');
+            document.body.classList.remove('dragging-artwork');
         }
     });
 

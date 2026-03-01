@@ -190,6 +190,13 @@ function setupArtworkEvents(artwork) {
             const rect = artwork.getBoundingClientRect();
             dragOffset.x = e.clientX - rect.left;
             dragOffset.y = e.clientY - rect.top;
+
+            // Show custom animated cursor
+            const cursor = document.getElementById('custom-drag-cursor');
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursor.classList.add('active');
+            document.body.classList.add('dragging-artwork');
         }
 
         selectArtwork(artwork);
