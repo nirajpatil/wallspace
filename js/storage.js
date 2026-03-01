@@ -217,10 +217,9 @@ function deleteLayout(index) {
 function clearWall() {
     if (document.querySelectorAll('.artwork').length > 0) {
         if (confirm('Are you sure you want to clear all artwork from the wall?')) {
-            // Only remove artwork elements, not the buttons or other UI
             document.querySelectorAll('.artwork').forEach(artwork => artwork.remove());
             selectedArtwork = null;
-            document.getElementById('artworkDialog').classList.remove('active');
+            closeAllDialogs();
         }
     }
 }
@@ -229,7 +228,7 @@ function clearWall() {
 function clearArtworks() {
     document.querySelectorAll('.artwork').forEach(artwork => artwork.remove());
     selectedArtwork = null;
-    document.getElementById('artworkDialog').classList.remove('active');
+    closeAllDialogs();
 }
 
 // Export all layouts as a JSON file

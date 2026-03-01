@@ -178,9 +178,6 @@ function addToWall(imageSrc) {
 // Setup mouse event handlers for artwork
 function setupArtworkEvents(artwork) {
     artwork.addEventListener('mousedown', function(e) {
-        // Prevent interactions in preview mode
-        if (isPreviewMode) return;
-
         if (e.target.classList.contains('resize-handle')) {
             // Resize functionality disabled - use sidebar dimension inputs instead
             // isResizing = true;
@@ -204,7 +201,7 @@ function setupArtworkEvents(artwork) {
     });
 }
 
-// Select artwork and show settings in sidebar
+// Select artwork and show floating artwork dialog
 function selectArtwork(artwork) {
     // Remove selection from all artworks
     document.querySelectorAll('.artwork').forEach(art => {
@@ -215,12 +212,10 @@ function selectArtwork(artwork) {
     artwork.classList.add('selected');
     selectedArtwork = artwork;
 
-    // Show sidebar artwork panel
-    const artworkPanel = document.getElementById('artworkPanel');
-    artworkPanel.style.display = 'block';
-
-    // Update control values based on current artwork
+    // Update control values, then open and position the dialog
     updateControlsFromArtwork(artwork);
+    openDialog('dialog-artwork');
+    positionArtworkDialog(artwork);
 
     // Update distance guides
     updateDistanceGuides();
@@ -286,10 +281,7 @@ function deleteSelected() {
     if (selectedArtwork) {
         selectedArtwork.remove();
         selectedArtwork = null;
-        // Hide sidebar artwork panel
-        document.getElementById('artworkPanel').style.display = 'none';
-
-        // Clear distance guides when artwork is deleted
+        closeAllDialogs();
         updateDistanceGuides();
     }
 }

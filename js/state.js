@@ -39,3 +39,6 @@ let wallBackgroundImage = null;   // Data URL of uploaded wall background image
 // Collection
 let collectionItems = [];         // Array of {id, src, name, dateAdded}
 let collectionCounter = 0;        // Counter for generating unique collection IDs
+
+// Room environment
+let timeOfDay = 'afternoon';      // Current time-of-day preset: 'morning', 'afternoon', 'night'

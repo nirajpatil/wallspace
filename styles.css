@@ -38,175 +38,304 @@ body.dragging-artwork *:not(#custom-drag-cursor):not(#custom-drag-cursor img) {
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #F5F4F1;
+    background: #1a1a1a;
     min-height: 100vh;
     color: #333;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
+/* Full-bleed layout */
 .main-layout {
-    display: flex;
-    height: 100vh;
     width: 100vw;
+    height: 100vh;
     overflow: hidden;
 }
 
-.column-1 {
-    width: 320px;
-    flex-shrink: 0;
-    background: transparent;
-    overflow-y: auto;
-    padding: 20px;
-}
-
-.column-3 {
-    flex: 1;
-    background: transparent;
-    overflow-y: auto;
+/* Workspace is the full room environment */
+.workspace {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
-
-.control-panel {
-    background: transparent;
-    padding: 0;
-    margin-bottom: 20px;
-}
-
-/* Artwork Settings Panel in Sidebar */
-.artwork-panel {
-    background: transparent;
-    padding: 0;
-    margin-bottom: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e0e0e0;
-}
-
-/* Collection Panel in Sidebar */
-.collection-panel {
-    background: transparent;
-    padding: 0;
-    margin-bottom: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e0e0e0;
-}
-
-/* Collection List */
-.collection-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-/* Collection Item (thumbnail + name) */
-.collection-item {
-    display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 6px 8px;
-    background: #f5f5f5;
-    border-radius: 4px;
-    cursor: grab;
+    justify-content: flex-start;
 }
 
-.collection-item:hover {
-    background: #e8e8e8;
+/* Lighting overlay — covers full room, pointer-events none */
+#lighting-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 500;
+    pointer-events: none;
+    transition: background-color 0.6s ease;
+    background-color: transparent;
 }
 
-.collection-item.dragging {
-    opacity: 0.5;
+/* Time-of-day states */
+.workspace.time-morning #lighting-overlay {
+    background-color: rgba(255, 190, 80, 0.12);
 }
 
-.collection-item-thumbnail {
-    height: 32px;
-    width: auto;
-    max-width: 48px;
-    object-fit: contain;
-    border-radius: 2px;
+.workspace.time-afternoon #lighting-overlay {
+    background-color: transparent;
+}
+
+.workspace.time-night #lighting-overlay {
+    background-color: rgba(10, 20, 50, 0.45);
+}
+
+/* Room ceiling */
+#room-ceiling {
+    width: 100vw;
+    flex: 1;
+    background: linear-gradient(to bottom, #d6cfc4, #e8e2d9);
+    flex-shrink: 1;
+    min-height: 40px;
+}
+
+/* Time-of-day ceiling tints */
+.workspace.time-morning #room-ceiling {
+    background: linear-gradient(to bottom, #e8d5b0, #f0e8d4);
+}
+
+.workspace.time-night #room-ceiling {
+    background: linear-gradient(to bottom, #1a1e2e, #2a2e3e);
+}
+
+/* Wall container — size driven by JS */
+.wall-container {
+    border: none;
+    position: relative;
+    overflow: hidden;
+    max-width: 100vw;
     flex-shrink: 0;
 }
 
-.collection-item-name {
-    flex: 1;
-    font-size: 13px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: #333;
+/* Baseboard strip */
+#room-baseboard {
+    width: 100vw;
+    height: 10px;
+    background: #8a7560;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
 }
 
-.collection-item-delete {
+/* Time-of-day baseboard tints */
+.workspace.time-night #room-baseboard {
+    background: #4a3d2e;
+}
+
+/* Room floor */
+#room-floor {
+    width: 100vw;
+    flex: 1;
+    background: repeating-linear-gradient(
+        90deg,
+        #c4a882 0px,
+        #c4a882 40px,
+        #b8996e 40px,
+        #b8996e 42px
+    );
+    flex-shrink: 1;
+    min-height: 40px;
+}
+
+/* Time-of-day floor tints */
+.workspace.time-morning #room-floor {
+    background: repeating-linear-gradient(
+        90deg,
+        #d4b892 0px,
+        #d4b892 40px,
+        #c8a97e 40px,
+        #c8a97e 42px
+    );
+}
+
+.workspace.time-night #room-floor {
+    background: repeating-linear-gradient(
+        90deg,
+        #5a4830 0px,
+        #5a4830 40px,
+        #4e3c24 40px,
+        #4e3c24 42px
+    );
+}
+
+/* ─── Floating Icon Bar ─────────────────────────────────────────── */
+
+#icon-bar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 32px;
+    padding: 10px 24px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    z-index: 1000;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.35s ease;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+}
+
+#icon-bar.hidden {
+    transform: translateX(-50%) translateY(calc(100% + 24px));
     opacity: 0;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
     cursor: pointer;
-    color: #e74c3c;
+    padding: 6px 8px;
+    border-radius: 12px;
+    transition: background 0.15s ease, transform 0.15s ease;
+    color: #333;
+    margin: 0;
+    line-height: 1;
+}
+
+.icon-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.icon-btn.active {
+    background: rgba(102, 126, 234, 0.15);
+}
+
+.icon-btn-hide {
     font-size: 14px;
-    padding: 4px;
-    transition: opacity 0.2s ease;
+    color: #888;
+    border-left: 1px solid #e0e0e0;
+    padding-left: 16px;
+    margin-left: 4px;
 }
 
-.collection-item:hover .collection-item-delete {
-    opacity: 1;
-}
-
-.collection-item-delete:hover {
-    color: #c0392b;
-}
-
-/* Drop zone visual feedback */
-.wall-container.drag-over {
-    outline: 3px dashed #667eea;
-    outline-offset: -3px;
-}
-
-/* Collapsible Section Styles */
-.section-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* Tab to restore icon bar when hidden */
+#icon-bar-show {
+    position: fixed;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 4px 16px;
     cursor: pointer;
+    z-index: 1001;
+    display: none;
+    font-size: 12px;
+    color: #666;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     user-select: none;
-    margin-bottom: 15px;
 }
 
-.section-header span {
+#icon-bar-show:hover {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* ─── Settings Dialogs ──────────────────────────────────────────── */
+
+.settings-dialog {
+    position: fixed;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    padding: 20px;
+    display: none;
+    z-index: 999;
+    min-width: 280px;
+    max-width: 360px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.settings-dialog h4 {
     color: #2c3e50;
+    margin-bottom: 16px;
     font-size: 16px;
     font-family: 'Basalte-Fond', sans-serif;
     font-weight: bold;
 }
 
-.section-chevron {
-    color: #555;
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
+/* Wall dialog — anchored bottom-left */
+#dialog-wall {
+    bottom: 90px;
+    left: 24px;
 }
 
-.section-chevron.open {
-    transform: rotate(90deg);
+/* Artwork dialog — positioned by JS */
+#dialog-artwork {
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.section-content {
-    display: none;
+/* Time dialog — centered */
+.dialog-time {
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 240px;
+    max-width: 320px;
 }
 
-.section-content.open {
-    display: block;
+/* Library dialog — anchored bottom-right */
+.dialog-library {
+    bottom: 90px;
+    right: 24px;
+    left: auto;
+    max-width: 300px;
 }
 
-.control-panel h3 {
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-size: 40px;
-    font-family: 'Basalte-Fond', sans-serif;
-    font-weight: bold;
+/* Time of day buttons */
+.time-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
+
+.time-btn {
+    background: #f5f5f5;
+    color: #333;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    margin: 0;
+    width: 100%;
+}
+
+.time-btn:hover {
+    background: #ebebeb;
+    transform: none;
+}
+
+.time-btn.time-btn-active {
+    background: rgba(102, 126, 234, 0.12);
+    border-color: #667eea;
+    color: #4a5bb8;
+}
+
+/* ─── Shared Form Elements ──────────────────────────────────────── */
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 14px;
 }
 
 label {
@@ -214,17 +343,18 @@ label {
     margin-bottom: 5px;
     font-weight: 400;
     color: #555;
-    font-size: 14px;
+    font-size: 13px;
     line-height: 20px;
 }
 
 input, select {
     width: 100%;
-    padding: 10px;
+    padding: 8px 10px;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
+    font-size: 13px;
+    transition: border-color 0.2s ease;
+    background: #fff;
 }
 
 input:focus, select:focus {
@@ -233,251 +363,49 @@ input:focus, select:focus {
 }
 
 .color-input {
-    height: 50px;
+    height: 44px;
     cursor: pointer;
+    padding: 4px;
 }
 
 button {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    padding: 12px 24px;
+    padding: 10px 20px;
     border-radius: 25px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 400;
-    transition: transform 0.2s ease;
-    margin: 5px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    margin: 4px 0;
 }
 
 button:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
+    opacity: 0.9;
 }
 
-.workspace {
-    background: transparent;
-    padding: 0;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+.btn-small {
+    font-size: 11px;
+    padding: 5px 10px;
+    margin-top: 6px;
 }
 
-/* Zoom Control Button */
-.zoom-control-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: white;
-    border: 2px solid #667eea;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 200;
-    padding: 0;
-    margin: 0;
-    color: #667eea;
-    transition: all 0.3s ease;
+.control-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 4px;
 }
 
-.zoom-control-btn:hover {
-    background: #667eea;
-    color: white;
-    transform: scale(1.1);
-}
-
-/* Room Perspective Wrapper */
-.room-perspective-wrapper {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    perspective: 1000px;
-    perspective-origin: center center;
-    transition: perspective 0.6s ease;
-}
-
-.room-perspective-wrapper.zoomed {
-    perspective: 2000px;
-}
-
-/* Room Container */
-.room-container {
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.6s ease;
-}
-
-.room-container.zoomed {
-    transform: scale(0.4) translateZ(-400px) rotateX(5deg);
-}
-
-/* Room Surfaces */
-.room-ceiling,
-.room-floor,
-.room-left-wall,
-.room-right-wall {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.6s ease;
-    background: #e8e8e8;
-}
-
-.room-container.zoomed .room-ceiling,
-.room-container.zoomed .room-floor,
-.room-container.zoomed .room-left-wall,
-.room-container.zoomed .room-right-wall {
-    opacity: 1;
-}
-
-/* Ceiling */
-.room-ceiling {
-    width: 100%;
-    height: 500px;
-    background: linear-gradient(to bottom, #f5f5f5, #e8e8e8);
-    transform-origin: bottom center;
-    transform: rotateX(90deg);
-    border-bottom: 3px solid #888;
-}
-
-.room-container.zoomed .room-ceiling {
-    transform: rotateX(90deg) translateZ(0px);
-}
-
-/* Floor */
-.room-floor {
-    width: 100%;
-    height: 500px;
-    background: linear-gradient(to top, #d0d0d0, #e0e0e0);
-    transform-origin: top center;
-    transform: rotateX(-90deg);
-    top: 100%;
-    border-top: 3px solid #888;
-}
-
-.room-container.zoomed .room-floor {
-    transform: rotateX(-90deg) translateZ(0px);
-}
-
-/* Left Wall */
-.room-left-wall {
-    width: 500px;
-    height: 100%;
-    background: linear-gradient(to right, #d8d8d8, #e8e8e8);
-    transform-origin: right center;
-    transform: rotateY(90deg);
-    right: 100%;
-    border-right: 3px solid #888;
-    background-image: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 20px,
-        rgba(0, 0, 0, 0.08) 20px,
-        rgba(0, 0, 0, 0.08) 22px
-    );
-}
-
-.room-container.zoomed .room-left-wall {
-    transform: rotateY(90deg) translateZ(0px);
-}
-
-/* Right Wall */
-.room-right-wall {
-    width: 500px;
-    height: 100%;
-    background: linear-gradient(to left, #d8d8d8, #e8e8e8);
-    transform-origin: left center;
-    transform: rotateY(-90deg);
-    left: 100%;
-    border-left: 3px solid #888;
-    background-image: repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 20px,
-        rgba(0, 0, 0, 0.08) 20px,
-        rgba(0, 0, 0, 0.08) 22px
-    );
-}
-
-.room-container.zoomed .room-right-wall {
-    transform: rotateY(-90deg) translateZ(0px);
-}
-
-.wall-container {
-    border: none;
-    margin: 20px 0;
-    position: relative;
-    overflow: hidden;
-    min-height: 400px;
-    max-width: 100%;
-    height: auto;
-}
-
-/* Disable all interactions in preview mode */
-.room-container.zoomed .wall-container {
-    pointer-events: none;
-    user-select: none;
-}
-
-/* Hide wall control buttons in preview mode */
-.room-container.zoomed .wall-icon {
-    display: none !important;
-}
-
-.wall-icon {
-    position: absolute;
-    top: 10px;
-    background: white;
-    border: 2px solid #667eea;
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.3s ease, transform 0.2s ease, background 0.2s ease;
-    z-index: 100;
-    padding: 0;
-    margin: 0;
-    color: #667eea;
-}
-
-.wall-container:hover .wall-icon {
-    opacity: 1;
-}
-
-.wall-icon:hover {
-    background: #667eea;
-    color: white;
-    transform: scale(1.1);
-}
-
-.upload-icon {
-    left: 10px;
-}
-
-.save-icon {
-    right: 60px;
-}
-
-.delete-icon {
-    right: 10px;
-}
+/* ─── Artwork ───────────────────────────────────────────────────── */
 
 .artwork {
     position: absolute;
     cursor: move;
     border: 2px solid transparent;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.2s ease;
     user-select: none;
 }
 
@@ -487,20 +415,6 @@ button:hover {
 
 .artwork.selected {
     border-color: #000000;
-}
-
-/* Disable artwork interactions in preview mode */
-.room-container.zoomed .artwork {
-    cursor: default;
-    pointer-events: none;
-}
-
-.room-container.zoomed .artwork:hover {
-    border-color: transparent;
-}
-
-.room-container.zoomed .resize-handle {
-    display: none;
 }
 
 .artwork img {
@@ -548,10 +462,54 @@ button:hover {
     background: #667eea;
     cursor: se-resize;
     border-radius: 50%;
-    display: none; /* Disabled for now */
+    display: none;
 }
 
-/* Distance Guides SVG */
+/* ─── Wall icons (upload / save / clear) ───────────────────────── */
+
+.wall-icon {
+    position: absolute;
+    top: 10px;
+    background: white;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.15s ease, background 0.15s ease;
+    z-index: 100;
+    padding: 0;
+    margin: 0;
+    color: #667eea;
+}
+
+.wall-container:hover .wall-icon {
+    opacity: 1;
+}
+
+.wall-icon:hover {
+    background: #667eea;
+    color: white;
+    transform: scale(1.08);
+}
+
+.upload-icon { left: 10px; }
+.save-icon   { right: 56px; }
+.delete-icon { right: 10px; }
+
+/* ─── Drop zone feedback ────────────────────────────────────────── */
+
+.wall-container.drag-over {
+    outline: 3px dashed #667eea;
+    outline-offset: -3px;
+}
+
+/* ─── Distance Guides ───────────────────────────────────────────── */
+
 .distance-guides-svg {
     position: absolute;
     top: 0;
@@ -560,11 +518,6 @@ button:hover {
     height: 100%;
     pointer-events: none;
     z-index: 5;
-}
-
-/* Hide distance guides in preview mode */
-.room-container.zoomed .distance-guides-svg {
-    display: none;
 }
 
 .distance-guides-svg line {
@@ -579,94 +532,65 @@ button:hover {
     user-select: none;
 }
 
-/* Artwork Dialog */
-.artwork-dialog {
-    position: fixed;
-    display: none;
-    z-index: 1000;
-    pointer-events: none;
+/* ─── Collection ────────────────────────────────────────────────── */
+
+.collection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 280px;
+    overflow-y: auto;
 }
 
-.artwork-dialog.active {
-    display: block;
-    pointer-events: auto;
-}
-
-.dialog-content {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    border: 2px solid #667eea;
-    min-width: 320px;
-    max-width: 400px;
-}
-
-.dialog-content h4 {
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-size: 1.1em;
-    font-family: 'Basalte-Fond', sans-serif;
-    font-weight: bold;
-}
-
-.control-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-.layouts-panel {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 10px;
-}
-
-.layouts-panel h3 {
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-size: 1.2em;
-    font-family: 'Basalte-Fond', sans-serif;
-    font-weight: bold;
-}
-
-.layout-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-}
-
-.layout-item {
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 10px;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
-}
-
-.layout-item:hover {
-    border-color: #667eea;
-}
-
-.layout-preview {
-    width: 100%;
-    height: 100px;
-    background: #f5f5f5;
-    border-radius: 5px;
-    margin-bottom: 10px;
+.collection-item {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: #999;
+    gap: 10px;
+    padding: 6px 8px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    cursor: grab;
 }
 
-@media (max-width: 768px) {
-    .controls {
-        grid-template-columns: 1fr;
-    }
-    
-    .control-row {
-        grid-template-columns: 1fr;
-    }
+.collection-item:hover {
+    background: #e8e8e8;
+}
+
+.collection-item.dragging {
+    opacity: 0.5;
+}
+
+.collection-item-thumbnail {
+    height: 32px;
+    width: auto;
+    max-width: 48px;
+    object-fit: contain;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.collection-item-name {
+    flex: 1;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #333;
+}
+
+.collection-item-delete {
+    opacity: 0;
+    cursor: pointer;
+    color: #e74c3c;
+    font-size: 14px;
+    padding: 4px;
+    transition: opacity 0.2s ease;
+}
+
+.collection-item:hover .collection-item-delete {
+    opacity: 1;
+}
+
+.collection-item-delete:hover {
+    color: #c0392b;
 }

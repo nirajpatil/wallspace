@@ -5,16 +5,21 @@
  *               distance-guides, room-view, storage, ui)
  *
  * This file initializes the application on page load:
+ * - Sets up the room environment (always on, no preview toggle)
  * - Sets up the wall display
  * - Initializes unit displays
  * - Loads saved layouts
  * - Sets up UI event handlers
+ * - Initializes the collection module
  *
  * This must be the last script loaded.
  */
 
 // Initialize the application
 function initApp() {
+    // Initialize always-on room environment and default time-of-day
+    initRoomEnvironment();
+
     // Set up the wall display
     updateWall();
 
@@ -27,9 +32,6 @@ function initApp() {
 
     // Set up all UI event handlers
     initUIEventHandlers();
-
-    // Initialize collapsible sections
-    initCollapsibleSections();
 
     // Initialize collection module
     initCollection();

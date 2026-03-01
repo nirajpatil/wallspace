@@ -27,23 +27,25 @@ function updateWall() {
     const widthInches = units === 'cm' ? cmToInches(width) : width;
     const heightInches = units === 'cm' ? cmToInches(height) : height;
 
-    // Get the workspace container width to scale appropriately
-    // Use the workspace div, not the immediate parent which is now room-container
-    const workspace = document.querySelector('.workspace');
-    const maxWidth = workspace.offsetWidth - 40; // Account for padding
-    const maxHeight = window.innerHeight - 60; // Use browser window height minus padding for controls
+    // Scale wall to fit room viewport (wall takes max 70% width, 55% height)
+    const maxWallWidth = window.innerWidth * 0.70;
+    const maxWallHeight = window.innerHeight * 0.55;
 
     // Store old wallScale before changing it
     const oldWallScale = wallScale;
 
-    // Calculate scale to fit within available space
-    wallScale = Math.min(maxWidth / widthInches, maxHeight / heightInches);
+    // Calculate scale so wall fits within the room view proportionally
+    wallScale = Math.min(maxWallWidth / widthInches, maxWallHeight / heightInches);
     const displayWidth = widthInches * wallScale;
     const displayHeight = heightInches * wallScale;
 
     wallContainer.style.width = displayWidth + 'px';
     wallContainer.style.height = displayHeight + 'px';
     wallContainer.style.backgroundColor = color;
+
+    // Set workspace background to match wall color so room side-walls blend in
+    const workspace = document.getElementById('workspace');
+    if (workspace) workspace.style.backgroundColor = color;
 
     // Set background image if available
     if (wallBackgroundImage) {

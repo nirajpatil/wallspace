@@ -3,70 +3,118 @@
  *
  * Dependencies: state.js, wall.js, artwork.js, distance-guides.js
  *
- * This file handles all UI interactions:
- * - Dialog positioning and management
- * - Collapsible section toggles
+ * Handles:
+ * - Floating icon bar show/hide
+ * - Settings dialogs open/close/toggle
+ * - Artwork dialog positioning near selected artwork
  * - Global mouse event handlers for drag/resize
- * - Click outside dialog handling
+ * - Click-outside dialog dismissal
  * - Window resize handling
  *
  * Key functions:
- * - toggleSection(sectionId) - Toggle collapsible section visibility
- * - positionDialog(artwork, dialog) - Position dialog next to selected artwork
+ * - toggleIconBar() - Slide icon bar in/out
+ * - openDialog(dialogId) - Open a dialog, close others
+ * - toggleDialog(dialogId) - Toggle a dialog (used by icon buttons)
+ * - closeAllDialogs() - Close all settings dialogs
+ * - positionArtworkDialog(artwork) - Position artwork dialog near artwork
  * - initUIEventHandlers() - Set up all global event listeners
  */
 
-// Toggle collapsible section visibility
-function toggleSection(sectionId) {
-    const content = document.getElementById(sectionId + 'Content');
-    const chevron = document.getElementById(sectionId + 'Chevron');
+const DIALOG_IDS = ['dialog-wall', 'dialog-artwork', 'dialog-time', 'dialog-library'];
 
-    if (content && chevron) {
-        content.classList.toggle('open');
-        chevron.classList.toggle('open');
+// Slide icon bar off/on screen
+function toggleIconBar() {
+    const iconBar = document.getElementById('icon-bar');
+    const showBtn = document.getElementById('icon-bar-show');
+    iconBar.classList.toggle('hidden');
+    if (showBtn) {
+        showBtn.style.display = iconBar.classList.contains('hidden') ? 'block' : 'none';
     }
 }
 
-// Initialize sections to be open by default
-function initCollapsibleSections() {
-    // Open wall settings by default
-    const wallContent = document.getElementById('wallSettingsContent');
-    const wallChevron = document.getElementById('wallSettingsChevron');
-    if (wallContent && wallChevron) {
-        wallContent.classList.add('open');
-        wallChevron.classList.add('open');
-    }
-
-    // Open artwork settings by default
-    const artworkContent = document.getElementById('artworkSettingsContent');
-    const artworkChevron = document.getElementById('artworkSettingsChevron');
-    if (artworkContent && artworkChevron) {
-        artworkContent.classList.add('open');
-        artworkChevron.classList.add('open');
+// Open a specific dialog and close all others
+function openDialog(dialogId) {
+    closeAllDialogs();
+    const dialog = document.getElementById(dialogId);
+    if (dialog) {
+        dialog.style.display = 'block';
+        // Mark matching icon button as active
+        const iconMap = {
+            'dialog-wall': 'icon-wall',
+            'dialog-artwork': 'icon-artwork',
+            'dialog-time': 'icon-time',
+            'dialog-library': 'icon-library'
+        };
+        const btnId = iconMap[dialogId];
+        if (btnId) {
+            const btn = document.getElementById(btnId);
+            if (btn) btn.classList.add('active');
+        }
+        // For artwork dialog: if an artwork is selected, position near it
+        if (dialogId === 'dialog-artwork' && selectedArtwork) {
+            positionArtworkDialog(selectedArtwork);
+        }
     }
 }
 
-// Position the artwork settings dialog next to the selected artwork
-// NOTE: This function is disabled - artwork settings now appear in the sidebar
-function positionDialog(artwork, dialog) {
-    // Disabled: Dialog functionality moved to sidebar
-    // Keeping function for potential future use
-    return;
+// Toggle a dialog open/closed (used by icon bar buttons)
+function toggleDialog(dialogId) {
+    const dialog = document.getElementById(dialogId);
+    if (!dialog) return;
+    const isOpen = dialog.style.display === 'block';
+    closeAllDialogs();
+    if (!isOpen) {
+        openDialog(dialogId);
+    }
+}
+
+// Close all settings dialogs
+function closeAllDialogs() {
+    DIALOG_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+    // Remove active state from all icon buttons
+    document.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
+}
+
+// Position the artwork dialog near the selected artwork element
+function positionArtworkDialog(artwork) {
+    const dialog = document.getElementById('dialog-artwork');
+    if (!dialog || dialog.style.display === 'none') return;
+
+    const artworkRect = artwork.getBoundingClientRect();
+    const dialogWidth = 320;
+    const iconBarClearance = 100; // keep above icon bar
+
+    // Prefer right side of artwork, fall back to left
+    let left = artworkRect.right + 12;
+    if (left + dialogWidth > window.innerWidth - 10) {
+        left = artworkRect.left - dialogWidth - 12;
+    }
+    left = Math.max(10, Math.min(left, window.innerWidth - dialogWidth - 10));
+
+    // Align top with artwork, clamp so dialog doesn't go below icon bar
+    let top = artworkRect.top;
+    const maxBottom = window.innerHeight - iconBarClearance;
+    // We don't know dialog height before layout, so use a generous estimate
+    const estimatedHeight = 420;
+    if (top + estimatedHeight > maxBottom) {
+        top = Math.max(10, maxBottom - estimatedHeight);
+    }
+
+    dialog.style.left = left + 'px';
+    dialog.style.top = top + 'px';
+    dialog.style.bottom = 'auto';
+    dialog.style.right = 'auto';
+    dialog.style.transform = 'none';
 }
 
 // Initialize all UI event handlers
 function initUIEventHandlers() {
-    // Global mouse events for dragging and resizing
+    // Global mouse events for dragging
     document.addEventListener('mousemove', function(e) {
-        // Prevent all interactions in preview mode
-        if (isPreviewMode) {
-            isDragging = false;
-            isResizing = false;
-            return;
-        }
-
         if (isDragging && selectedArtwork) {
-            // Move custom animated cursor with the mouse
             const cursor = document.getElementById('custom-drag-cursor');
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
@@ -77,82 +125,70 @@ function initUIEventHandlers() {
             let newX = e.clientX - wallRect.left - dragOffset.x;
             let newY = e.clientY - wallRect.top - dragOffset.y;
 
-            // Keep within bounds
             newX = Math.max(0, Math.min(newX, wallContainer.offsetWidth - selectedArtwork.offsetWidth));
             newY = Math.max(0, Math.min(newY, wallContainer.offsetHeight - selectedArtwork.offsetHeight));
 
             selectedArtwork.style.left = newX + 'px';
             selectedArtwork.style.top = newY + 'px';
 
-            // Update distance guides while dragging
             updateDistanceGuides();
-        } else if (isResizing && selectedArtwork) {
-            // Resize functionality disabled - use sidebar dimension inputs instead
-            // const wallContainer = document.getElementById('wallContainer');
-            // const wallRect = wallContainer.getBoundingClientRect();
-            // const artworkRect = selectedArtwork.getBoundingClientRect();
 
-            // let newWidth = e.clientX - artworkRect.left;
-            // let newHeight = e.clientY - artworkRect.top;
-
-            // // Maintain aspect ratio
-            // const aspectRatio = selectedArtwork.offsetWidth / selectedArtwork.offsetHeight;
-            // if (newWidth / newHeight > aspectRatio) {
-            //     newWidth = newHeight * aspectRatio;
-            // } else {
-            //     newHeight = newWidth / aspectRatio;
-            // }
-
-            // // Minimum size
-            // newWidth = Math.max(50, newWidth);
-            // newHeight = Math.max(50, newHeight);
-
-            // selectedArtwork.style.width = newWidth + 'px';
-            // selectedArtwork.style.height = newHeight + 'px';
-
-            // // Update distance guides while resizing
-            // updateDistanceGuides();
+            // Keep artwork dialog roughly positioned during drag
+            positionArtworkDialog(selectedArtwork);
         }
     });
 
-    // Mouse up - end drag/resize operations
+    // Mouse up — end drag
     document.addEventListener('mouseup', function() {
-        if (!isPreviewMode) {
-            isDragging = false;
-            isResizing = false;
+        isDragging = false;
+        isResizing = false;
 
-            // Hide custom animated cursor
-            const cursor = document.getElementById('custom-drag-cursor');
-            cursor.classList.remove('active');
-            document.body.classList.remove('dragging-artwork');
-        }
+        const cursor = document.getElementById('custom-drag-cursor');
+        cursor.classList.remove('active');
+        document.body.classList.remove('dragging-artwork');
     });
 
-    // Deselect artwork when clicking outside (on the wall or workspace)
+    // Click outside dialogs and artwork → deselect / close dialogs
     document.addEventListener('click', function(e) {
-        // Don't process clicks in preview mode
-        if (isPreviewMode) return;
-
-        const artworkPanel = document.getElementById('artworkPanel');
-        const artwork = selectedArtwork;
         const wallContainer = document.getElementById('wallContainer');
 
-        // Check if click is on the wall container but not on any artwork or sidebar
-        if (artwork &&
+        // Deselect artwork when clicking on wall (not on artwork or any dialog)
+        const clickedInsideDialog = DIALOG_IDS.some(id => {
+            const el = document.getElementById(id);
+            return el && el.contains(e.target);
+        });
+        const clickedIconBar = document.getElementById('icon-bar').contains(e.target);
+
+        if (selectedArtwork &&
             wallContainer.contains(e.target) &&
             !e.target.closest('.artwork') &&
-            !artworkPanel.contains(e.target)) {
-            // Hide sidebar artwork panel
-            artworkPanel.style.display = 'none';
-            artwork.classList.remove('selected');
+            !clickedInsideDialog) {
+            closeAllDialogs();
+            selectedArtwork.classList.remove('selected');
             selectedArtwork = null;
-
-            // Clear distance guides when deselecting
             updateDistanceGuides();
+        }
+
+        // Close non-artwork dialogs when clicking outside them and outside the icon bar
+        if (!clickedInsideDialog && !clickedIconBar && !e.target.closest('.artwork')) {
+            // Only close if click was not on icon bar or a dialog
+            ['dialog-wall', 'dialog-time', 'dialog-library'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.style.display === 'block') {
+                    const iconMap = {
+                        'dialog-wall': 'icon-wall',
+                        'dialog-time': 'icon-time',
+                        'dialog-library': 'icon-library'
+                    };
+                    el.style.display = 'none';
+                    const btnId = iconMap[id];
+                    if (btnId) document.getElementById(btnId).classList.remove('active');
+                }
+            });
         }
     });
 
-    // Update wall scaling when window is resized
+    // Recompute wall scale on window resize
     window.addEventListener('resize', function() {
         updateWall();
     });
