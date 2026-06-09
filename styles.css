@@ -661,11 +661,60 @@ button:hover {
     color: #999;
 }
 
+/* AI framing loading indicator */
+.ai-loading-indicator {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 10;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 11px;
+    animation: ai-spin 1.4s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes ai-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* AI reasoning toast */
+.ai-reasoning-toast {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: rgba(20, 20, 20, 0.82);
+    color: #f0ede8;
+    font-size: 11px;
+    line-height: 1.4;
+    padding: 6px 9px;
+    border-radius: 5px;
+    z-index: 20;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    backdrop-filter: blur(4px);
+}
+
+.ai-reasoning-toast--error {
+    background: rgba(160, 40, 40, 0.82);
+}
+
+.ai-reasoning-toast--fade {
+    opacity: 0;
+}
+
 @media (max-width: 768px) {
     .controls {
         grid-template-columns: 1fr;
     }
-    
+
     .control-row {
         grid-template-columns: 1fr;
     }
