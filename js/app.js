@@ -33,6 +33,13 @@ function initApp() {
 
     // Initialize collection module
     initCollection();
+
+    // Restore saved API key into the field
+    const savedKey = localStorage.getItem('anthropicApiKey');
+    if (savedKey) {
+        const keyField = document.getElementById('anthropicApiKey');
+        if (keyField) keyField.value = savedKey;
+    }
 }
 
 // Run initialization when DOM is ready
