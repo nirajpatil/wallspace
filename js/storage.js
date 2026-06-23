@@ -217,10 +217,9 @@ function deleteLayout(index) {
 function clearWall() {
     if (document.querySelectorAll('.artwork').length > 0) {
         if (confirm('Are you sure you want to clear all artwork from the wall?')) {
-            // Only remove artwork elements, not the buttons or other UI
             document.querySelectorAll('.artwork').forEach(artwork => artwork.remove());
             selectedArtwork = null;
-            document.getElementById('artworkDialog').classList.remove('active');
+            _resetArtworkUI();
         }
     }
 }
@@ -229,7 +228,14 @@ function clearWall() {
 function clearArtworks() {
     document.querySelectorAll('.artwork').forEach(artwork => artwork.remove());
     selectedArtwork = null;
-    document.getElementById('artworkDialog').classList.remove('active');
+    _resetArtworkUI();
+}
+
+function _resetArtworkUI() {
+    const artworkPanel = document.getElementById('artworkPanel');
+    if (artworkPanel) artworkPanel.style.display = 'none';
+    const artworkDialog = document.getElementById('artworkDialog');
+    if (artworkDialog) artworkDialog.classList.remove('active');
 }
 
 // Export all layouts as a JSON file
@@ -303,6 +309,9 @@ function restoreWallSettings() {
         if (s.width  != null) document.getElementById('wallWidth').value  = s.width;
         if (s.height != null) document.getElementById('wallHeight').value = s.height;
         if (s.color  != null) document.getElementById('wallColor').value  = s.color;
-        if (s.units  != null) document.getElementById('wallUnits').value  = s.units;
+        if (s.units  != null) {
+            document.getElementById('wallUnits').value = s.units;
+            currentUnits = s.units; // sync state var so updateWallUnits() doesn't double-convert
+        }
     } catch (e) { console.warn('restoreWallSettings failed:', e); }
 }

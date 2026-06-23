@@ -43,19 +43,17 @@ function updateDistanceGuides() {
     const wallWidth = wallContainer.offsetWidth;
     const wallHeight = wallContainer.offsetHeight;
 
-    // Get artwork bounds (includes frame and matte if present)
+    // Get artwork bounds in wall-pixel space (divide screen coords by viewZoom)
     const artworkRect = selectedArtwork.getBoundingClientRect();
     const wallRect = wallContainer.getBoundingClientRect();
 
-    // Calculate artwork position relative to wall
-    const artworkLeft = artworkRect.left - wallRect.left;
-    const artworkTop = artworkRect.top - wallRect.top;
-    const artworkRight = artworkLeft + artworkRect.width;
-    const artworkBottom = artworkTop + artworkRect.height;
+    const artworkLeft   = (artworkRect.left   - wallRect.left) / viewZoom;
+    const artworkTop    = (artworkRect.top    - wallRect.top)  / viewZoom;
+    const artworkRight  = artworkLeft + artworkRect.width  / viewZoom;
+    const artworkBottom = artworkTop  + artworkRect.height / viewZoom;
 
-    // Calculate center points of each side
-    const centerX = artworkLeft + (artworkRect.width / 2);
-    const centerY = artworkTop + (artworkRect.height / 2);
+    const centerX = artworkLeft + artworkRect.width  / viewZoom / 2;
+    const centerY = artworkTop  + artworkRect.height / viewZoom / 2;
     const leftCenterX = artworkLeft;
     const leftCenterY = centerY;
     const rightCenterX = artworkRight;
@@ -72,10 +70,10 @@ function updateDistanceGuides() {
 
     otherArtworks.forEach(otherArt => {
         const otherRect = otherArt.getBoundingClientRect();
-        const otherLeft = otherRect.left - wallRect.left;
-        const otherTop = otherRect.top - wallRect.top;
-        const otherRight = otherLeft + otherRect.width;
-        const otherBottom = otherTop + otherRect.height;
+        const otherLeft   = (otherRect.left - wallRect.left) / viewZoom;
+        const otherTop    = (otherRect.top  - wallRect.top)  / viewZoom;
+        const otherRight  = otherLeft + otherRect.width  / viewZoom;
+        const otherBottom = otherTop  + otherRect.height / viewZoom;
 
         // Check if artwork is to the left (with vertical overlap)
         if (otherRight <= artworkLeft) {
@@ -123,8 +121,8 @@ function updateDistanceGuides() {
     if (nearestLeft) {
         const distInches = pixelsToUnits(nearestLeftDist, 'inches');
         const distCm = pixelsToUnits(nearestLeftDist, 'cm');
-        const otherCenterY = nearestLeft.otherTop + (nearestLeft.otherRect.height / 2);
-        const guideY = (centerY + otherCenterY) / 2; // Use midpoint of both centers
+        const otherCenterY = nearestLeft.otherTop + nearestLeft.otherRect.height / viewZoom / 2;
+        const guideY = (centerY + otherCenterY) / 2;
         drawGuide(svg, nearestLeft.otherRight, guideY, leftCenterX, guideY,
                  distInches, distCm, 'horizontal');
     } else if (artworkLeft > 0) {
@@ -138,7 +136,7 @@ function updateDistanceGuides() {
     if (nearestRight) {
         const distInches = pixelsToUnits(nearestRightDist, 'inches');
         const distCm = pixelsToUnits(nearestRightDist, 'cm');
-        const otherCenterY = nearestRight.otherTop + (nearestRight.otherRect.height / 2);
+        const otherCenterY = nearestRight.otherTop + nearestRight.otherRect.height / viewZoom / 2;
         const guideY = (centerY + otherCenterY) / 2;
         drawGuide(svg, rightCenterX, guideY, nearestRight.otherLeft, guideY,
                  distInches, distCm, 'horizontal');
@@ -153,7 +151,7 @@ function updateDistanceGuides() {
     if (nearestTop) {
         const distInches = pixelsToUnits(nearestTopDist, 'inches');
         const distCm = pixelsToUnits(nearestTopDist, 'cm');
-        const otherCenterX = nearestTop.otherLeft + (nearestTop.otherRect.width / 2);
+        const otherCenterX = nearestTop.otherLeft + nearestTop.otherRect.width / viewZoom / 2;
         const guideX = (centerX + otherCenterX) / 2;
         drawGuide(svg, guideX, nearestTop.otherBottom, guideX, topCenterY,
                  distInches, distCm, 'vertical');
@@ -168,7 +166,7 @@ function updateDistanceGuides() {
     if (nearestBottom) {
         const distInches = pixelsToUnits(nearestBottomDist, 'inches');
         const distCm = pixelsToUnits(nearestBottomDist, 'cm');
-        const otherCenterX = nearestBottom.otherLeft + (nearestBottom.otherRect.width / 2);
+        const otherCenterX = nearestBottom.otherLeft + nearestBottom.otherRect.width / viewZoom / 2;
         const guideX = (centerX + otherCenterX) / 2;
         drawGuide(svg, guideX, bottomCenterY, guideX, nearestBottom.otherTop,
                  distInches, distCm, 'vertical');

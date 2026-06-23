@@ -189,8 +189,9 @@ function setupArtworkEvents(artwork) {
         } else {
             isDragging = true;
             const rect = artwork.getBoundingClientRect();
-            dragOffset.x = e.clientX - rect.left;
-            dragOffset.y = e.clientY - rect.top;
+            // Convert screen-space offset to wall-coordinate space
+            dragOffset.x = (e.clientX - rect.left) / viewZoom;
+            dragOffset.y = (e.clientY - rect.top) / viewZoom;
 
             // Show custom animated cursor
             const cursor = document.getElementById('custom-drag-cursor');
