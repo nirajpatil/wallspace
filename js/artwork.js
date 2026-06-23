@@ -123,7 +123,7 @@ function handleImageUpload(event) {
 
             wallContainer.appendChild(artwork);
             setupArtworkEvents(artwork);
-            analyzeArtworkForFraming(artwork, e.target.result);
+            // analyzeArtworkForFraming(artwork, e.target.result);
         };
         reader.readAsDataURL(file);
     });

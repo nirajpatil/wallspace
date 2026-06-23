@@ -110,6 +110,7 @@ function updateWall() {
             updateDistanceGuides();
         }
     }
+    if (typeof saveWallSettings === 'function') saveWallSettings();
 }
 
 // Handle wall unit conversion (inches <-> cm)
@@ -133,6 +134,7 @@ function updateWallUnits() {
     // Update unit labels
     document.getElementById('wallWidthUnit').textContent = newUnits;
     document.getElementById('wallHeightUnit').textContent = newUnits;
+    if (typeof saveWallSettings === 'function') saveWallSettings();
 }
 
 // Handle wall background image upload

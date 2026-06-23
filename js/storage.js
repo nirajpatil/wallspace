@@ -281,3 +281,28 @@ function importLayouts(event) {
     // Clear the input
     event.target.value = '';
 }
+
+// Auto-save wall settings to localStorage
+function saveWallSettings() {
+    try {
+        localStorage.setItem('wallspace_wall_settings', JSON.stringify({
+            width:  document.getElementById('wallWidth').value,
+            height: document.getElementById('wallHeight').value,
+            color:  document.getElementById('wallColor').value,
+            units:  document.getElementById('wallUnits').value,
+        }));
+    } catch (e) { console.warn('saveWallSettings failed:', e); }
+}
+
+// Restore wall settings from localStorage (call before updateWall)
+function restoreWallSettings() {
+    try {
+        const saved = localStorage.getItem('wallspace_wall_settings');
+        if (!saved) return;
+        const s = JSON.parse(saved);
+        if (s.width  != null) document.getElementById('wallWidth').value  = s.width;
+        if (s.height != null) document.getElementById('wallHeight').value = s.height;
+        if (s.color  != null) document.getElementById('wallColor').value  = s.color;
+        if (s.units  != null) document.getElementById('wallUnits').value  = s.units;
+    } catch (e) { console.warn('restoreWallSettings failed:', e); }
+}

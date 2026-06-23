@@ -44,6 +44,14 @@ function initCollapsibleSections() {
         artworkContent.classList.add('open');
         artworkChevron.classList.add('open');
     }
+
+    // Open catalog by default
+    const catalogContent = document.getElementById('catalogContent');
+    const catalogChevron = document.getElementById('catalogChevron');
+    if (catalogContent && catalogChevron) {
+        catalogContent.classList.add('open');
+        catalogChevron.classList.add('open');
+    }
 }
 
 // Position the artwork settings dialog next to the selected artwork
