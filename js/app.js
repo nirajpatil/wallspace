@@ -25,6 +25,9 @@ function initApp() {
     // Set up the wall display
     updateWall();
 
+    // Set initial pan/zoom — centered at 1:1 scale (20px/inch)
+    initViewTransform();
+
     // Load any saved layouts from localStorage
     loadSavedLayouts();
 

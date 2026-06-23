@@ -31,10 +31,18 @@ let savedLayouts = [];            // Array of saved layout configurations
 // Units and scale
 let currentUnits = 'inches';      // Current wall measurement units ('inches' or 'cm')
 let currentArtworkUnits = 'inches'; // Current artwork measurement units ('inches' or 'cm')
-let wallScale = 1;                // Pixels per inch for current wall display
+let wallScale = 20;               // Pixels per inch — fixed base scale, visual zoom handled by pan/zoom transform
 
 // Wall appearance
 let wallBackgroundImage = null;   // Data URL of uploaded wall background image
+
+// Pan/zoom view state
+let viewZoom = 1.0;               // CSS scale factor applied to panZoomWrapper
+let viewPanX = 0;                 // CSS translateX on panZoomWrapper (px)
+let viewPanY = 0;                 // CSS translateY on panZoomWrapper (px)
+let isPanning = false;            // True when user is panning the canvas
+let panStartX = 0;                // Mouse X at pan start minus viewPanX
+let panStartY = 0;                // Mouse Y at pan start minus viewPanY
 
 // Collection
 let collectionItems = [];         // Array of {id, src, name, dateAdded}

@@ -241,7 +241,7 @@ function initCatalogDropZone() {
         if (!item) return;
 
         const rect = wallContainer.getBoundingClientRect();
-        createArtworkFromCatalog(item, e.clientX - rect.left, e.clientY - rect.top);
+        createArtworkFromCatalog(item, (e.clientX - rect.left) / viewZoom, (e.clientY - rect.top) / viewZoom);
     });
 }
 

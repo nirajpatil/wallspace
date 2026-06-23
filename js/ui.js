@@ -16,6 +16,83 @@
  * - initUIEventHandlers() - Set up all global event listeners
  */
 
+// ─── PAN / ZOOM ──────────────────────────────────────────────────────────────
+
+function applyViewTransform() {
+    const wrapper = document.getElementById('panZoomWrapper');
+    if (wrapper) {
+        wrapper.style.transform = `translate(${viewPanX}px, ${viewPanY}px) scale(${viewZoom})`;
+    }
+}
+
+function initViewTransform() {
+    const wallContainer = document.getElementById('wallContainer');
+    const workspace = document.querySelector('.workspace');
+    if (!wallContainer || !workspace) return;
+    const vw = workspace.offsetWidth;
+    const vh = workspace.offsetHeight;
+    const ww = parseFloat(wallContainer.style.width)  || wallContainer.offsetWidth;
+    const wh = parseFloat(wallContainer.style.height) || wallContainer.offsetHeight;
+    // Start at 1.0 zoom (20px/inch), wall centered in viewport
+    viewZoom = 1.0;
+    viewPanX = (vw - ww) / 2;
+    viewPanY = (vh - wh) / 2;
+    applyViewTransform();
+}
+
+function fitWallToScreen() {
+    const wallContainer = document.getElementById('wallContainer');
+    const workspace = document.querySelector('.workspace');
+    if (!wallContainer || !workspace) return;
+    const vw = workspace.offsetWidth;
+    const vh = workspace.offsetHeight;
+    const ww = parseFloat(wallContainer.style.width)  || wallContainer.offsetWidth;
+    const wh = parseFloat(wallContainer.style.height) || wallContainer.offsetHeight;
+    if (!ww || !wh) return;
+    viewZoom = Math.min((vw - 40) / ww, (vh - 40) / wh);
+    viewPanX = (vw - ww * viewZoom) / 2;
+    viewPanY = (vh - wh * viewZoom) / 2;
+    applyViewTransform();
+}
+
+function initPanZoom() {
+    const workspace = document.querySelector('.workspace');
+    const wallContainer = document.getElementById('wallContainer');
+
+    // Mouse wheel — zoom centred on cursor
+    workspace.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        const factor = e.deltaY < 0 ? 1.08 : 1 / 1.08;
+        const newZoom = Math.max(0.05, Math.min(5, viewZoom * factor));
+        const rect = workspace.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        viewPanX = mx - (mx - viewPanX) * (newZoom / viewZoom);
+        viewPanY = my - (my - viewPanY) * (newZoom / viewZoom);
+        viewZoom = newZoom;
+        applyViewTransform();
+    }, { passive: false });
+
+    // Mousedown on wall background — start pan
+    wallContainer.addEventListener('mousedown', function(e) {
+        if (e.target.closest('.artwork')) return;
+        if (isPreviewMode) return;
+        isPanning = true;
+        panStartX = e.clientX - viewPanX;
+        panStartY = e.clientY - viewPanY;
+        document.body.style.cursor = 'grabbing';
+        e.preventDefault();
+    });
+}
+
+// ─── SIDEBAR ─────────────────────────────────────────────────────────────────
+
+// Toggle sidebar open/closed
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('collapsed');
+}
+
 // Toggle collapsible section visibility
 function toggleSection(sectionId) {
     const content = document.getElementById(sectionId + 'Content');
@@ -66,6 +143,14 @@ function positionDialog(artwork, dialog) {
 function initUIEventHandlers() {
     // Global mouse events for dragging and resizing
     document.addEventListener('mousemove', function(e) {
+        // Handle panning
+        if (isPanning) {
+            viewPanX = e.clientX - panStartX;
+            viewPanY = e.clientY - panStartY;
+            applyViewTransform();
+            return;
+        }
+
         // Prevent all interactions in preview mode
         if (isPreviewMode) {
             isDragging = false;
@@ -76,14 +161,17 @@ function initUIEventHandlers() {
         if (isDragging && selectedArtwork) {
             // Move custom animated cursor with the mouse
             const cursor = document.getElementById('custom-drag-cursor');
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+            if (cursor) {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            }
 
             const wallContainer = document.getElementById('wallContainer');
             const wallRect = wallContainer.getBoundingClientRect();
 
-            let newX = e.clientX - wallRect.left - dragOffset.x;
-            let newY = e.clientY - wallRect.top - dragOffset.y;
+            // Divide by viewZoom to convert from screen pixels to wall pixels
+            let newX = (e.clientX - wallRect.left) / viewZoom - dragOffset.x;
+            let newY = (e.clientY - wallRect.top) / viewZoom - dragOffset.y;
 
             // Keep within bounds
             newX = Math.max(0, Math.min(newX, wallContainer.offsetWidth - selectedArtwork.offsetWidth));
@@ -123,15 +211,17 @@ function initUIEventHandlers() {
         }
     });
 
-    // Mouse up - end drag/resize operations
+    // Mouse up - end drag/resize/pan operations
     document.addEventListener('mouseup', function() {
+        if (isPanning) {
+            isPanning = false;
+            document.body.style.cursor = '';
+        }
         if (!isPreviewMode) {
             isDragging = false;
             isResizing = false;
-
-            // Hide custom animated cursor
             const cursor = document.getElementById('custom-drag-cursor');
-            cursor.classList.remove('active');
+            if (cursor) cursor.classList.remove('active');
             document.body.classList.remove('dragging-artwork');
         }
     });
@@ -160,8 +250,5 @@ function initUIEventHandlers() {
         }
     });
 
-    // Update wall scaling when window is resized
-    window.addEventListener('resize', function() {
-        updateWall();
-    });
+    initPanZoom();
 }
