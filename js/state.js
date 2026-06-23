@@ -39,3 +39,7 @@ let wallBackgroundImage = null;   // Data URL of uploaded wall background image
 // Collection
 let collectionItems = [];         // Array of {id, src, name, dateAdded}
 let collectionCounter = 0;        // Counter for generating unique collection IDs
+
+// Catalog
+let catalogItems = [];            // Array of {id, name, widthMm, heightMm, hasFrame, isArt, src}
+let catalogCounter = 0;           // Counter for generating unique catalog IDs

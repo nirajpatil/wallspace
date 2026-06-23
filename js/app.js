@@ -15,12 +15,15 @@
 
 // Initialize the application
 function initApp() {
-    // Set up the wall display
-    updateWall();
+    // Restore saved wall dimensions before updateWall() reads them
+    restoreWallSettings();
 
-    // Initialize unit displays
+    // Sync currentUnits with the restored value before updateWall() reads inputs
     updateWallUnits();
     updateArtworkUnits();
+
+    // Set up the wall display
+    updateWall();
 
     // Load any saved layouts from localStorage
     loadSavedLayouts();
@@ -31,8 +34,8 @@ function initApp() {
     // Initialize collapsible sections
     initCollapsibleSections();
 
-    // Initialize collection module
-    initCollection();
+    // Initialize artwork catalog (replaces collection)
+    initCatalog();
 
     // Restore saved API key into the field
     const savedKey = localStorage.getItem('anthropicApiKey');
